@@ -1,12 +1,12 @@
-import { For, createSignal } from "solid-js";
+import { For } from "solid-js";
 import "./App.css";
 import Cog from "./components/cog";
 import Grid from "./components/grid";
 import SVG from "./components/svg";
 import { useAnimationFrame } from "./hooks/use-animation-frame";
+import { useGameState } from "./hooks/use-game-state";
 import { useKeyboardControl } from "./hooks/use-keyboard-controls";
-import { RotationDirection, type Cog as CogProps, type Grid as GridProps } from "./model";
-import { moveCogsToBottom } from "./utils/cog.utils";
+import { type Grid as GridProps } from "./model";
 
 function App() {
   const width = 700;
@@ -14,24 +14,17 @@ function App() {
   const gridGap = 5;
 
   const grid: GridProps = {
-    viewBox: [0, 0, 200, 300],
+    viewBox: [0, 0, 100, 100],
     gap: 10,
   };
 
-  const [cogs, setCogs] = createSignal<CogProps[]>([
-    { position: [10, 0], size: 10, rotationDirection: RotationDirection.Clockwise },
-    { position: [10, 30], size: 10, rotationDirection: RotationDirection.Clockwise },
-    { position: [10, 60], size: 10, rotationDirection: RotationDirection.Clockwise },
-  ]);
+  const { cogs, tick, moveLeft, moveRight, moveBottom } = useGameState(grid);
 
   useKeyboardControl({
-    onRight: () => {},
+    onRight: moveRight,
+    onBottom: moveBottom,
+    onLeft: moveLeft,
   });
-
-  function tick() {
-    const newCogs = moveCogsToBottom(cogs(), grid);
-    setCogs(newCogs);
-  }
 
   useAnimationFrame(tick, 500);
 

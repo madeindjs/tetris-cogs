@@ -34,7 +34,7 @@ function computeRotationDirection(dir: RotationDirection, ...dirs: RotationDirec
   return dir;
 }
 
-function isSameCog(a: Cog, b: Cog) {
+export function isSameCog(a: Cog, b: Cog) {
   return a.size === b.size && a.position[0] === b.position[0] && a.position[1] === b.position[1];
 }
 
