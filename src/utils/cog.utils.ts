@@ -2,11 +2,17 @@ import type { Cog, Grid, RotationDirection } from "../model";
 import { isCirclesIntersect } from "./geometry.utils";
 
 function isOutside(cog: Cog, grid: Grid) {
-  // todo
   const [x, y] = cog.position;
-  const yMax = grid.viewBox[3];
+  const [xMin, _, xMax, yMax] = grid.viewBox;
 
-  return y + cog.size / 2 >= yMax;
+  // outside bottom
+  if (y + cog.size / 2 >= yMax) return true;
+  // outside left
+  if (x - cog.size / 2 < xMin) return true;
+  // outside right
+  if (x + cog.size / 2 >= xMax) return true;
+
+  return false;
 }
 
 function isColliding(cog: Cog, others: Cog[]) {

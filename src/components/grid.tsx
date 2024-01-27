@@ -16,7 +16,7 @@ export default function Grid({ viewBox: [x, y, width, height], gap }: Props) {
   }
 
   function* getRows(): Generator<LinePoints> {
-    for (let i = x; i <= height; i += gap) {
+    for (let i = y; i <= height; i += gap) {
       yield [0, i, width, i];
     }
   }
