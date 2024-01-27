@@ -12,7 +12,12 @@ function App() {
   const viewBox: ViewBox = [0, 0, 100, 100];
   const gridGap = 10;
 
-  const [cogs, setCogs] = createSignal<CogProps[]>([{ position: [10, 10], size: 10 }]);
+  const [cogs, setCogs] = createSignal<CogProps[]>([
+    { position: [10, 0], size: 10 },
+    { position: [10, 30], size: 10 },
+    { position: [50, 0], size: 20 },
+    { position: [90, 0], size: 20 },
+  ]);
 
   function moveCog(cog: CogProps): CogProps {
     const [x, y] = cog.position;
