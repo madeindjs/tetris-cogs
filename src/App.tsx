@@ -1,35 +1,21 @@
-import { createSignal } from 'solid-js'
-import solidLogo from './assets/solid.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import Cog from "./components/cog";
+import Grid from "./components/grid";
+import SVG from "./components/svg";
+import type { ViewBox } from "./model";
 
 function App() {
-  const [count, setCount] = createSignal(0)
+  const width = 700;
+  const height = 700;
+  const viewBox: ViewBox = [0, 0, 100, 100];
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://solidjs.com" target="_blank">
-          <img src={solidLogo} class="logo solid" alt="Solid logo" />
-        </a>
-      </div>
-      <h1>Vite + Solid</h1>
-      <div class="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count()}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p class="read-the-docs">
-        Click on the Vite and Solid logos to learn more
-      </p>
-    </>
-  )
+    <SVG width={width} height={height} viewBox={viewBox.join(" ")}>
+      <Cog position={[10, 10]} size={10} />
+      <Cog position={[30, 30]} size={10} />
+      <Grid viewBox={viewBox} gap={10} />
+    </SVG>
+  );
 }
 
-export default App
+export default App;
