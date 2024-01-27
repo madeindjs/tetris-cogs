@@ -1,11 +1,6 @@
-import type { Point } from "../model";
+import type { Cog as CogProps } from "../model";
 
-type Props = {
-  size: number;
-  position: Point;
-};
-
-export default function Cog({ size, position: [x, y] }: Props) {
+export default function Cog({ size, position: [x, y] }: CogProps) {
   return (
     <g aria-describedby="cog">
       <circle r={size} cx={x} cy={y} fill="red" stroke-width={1}></circle>;
