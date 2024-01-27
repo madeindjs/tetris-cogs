@@ -1,6 +1,6 @@
 import type { Cog as CogProps } from "../model";
 
-export default function Cog({ size, position: [x, y] }: CogProps) {
+export default function Cog({ size, position: [x, y], rotationDirection }: CogProps) {
   return (
     <g aria-describedby="cog">
       <circle r={size} cx={x} cy={y} fill="red" stroke-width={1}></circle>
@@ -14,7 +14,7 @@ export default function Cog({ size, position: [x, y] }: CogProps) {
         attributeType="XML"
         type="rotate"
         from={`0 ${x} ${y}`}
-        to={`360 ${x} ${y}`}
+        to={`${rotationDirection === "clock" ? 360 : -360} ${x} ${y}`}
         dur="10s"
         repeatCount="indefinite"
       />

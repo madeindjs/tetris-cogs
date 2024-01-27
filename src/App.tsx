@@ -18,10 +18,8 @@ function App() {
   };
 
   const [cogs, setCogs] = createSignal<CogProps[]>([
-    { position: [10, 0], size: 10 },
-    { position: [10, 30], size: 10 },
-    { position: [50, 0], size: 20 },
-    { position: [90, 0], size: 20 },
+    { position: [10, 0], size: 10, rotationDirection: "clock" },
+    { position: [10, 30], size: 10, rotationDirection: "anti" },
   ]);
 
   function tick() {
@@ -35,7 +33,9 @@ function App() {
   return (
     <SVG width={width} height={height} viewBox={grid.viewBox.join(" ")}>
       <Grid viewBox={grid.viewBox} gap={gridGap} />
-      <For each={cogs()}>{(cog) => <Cog position={cog.position} size={cog.size} />}</For>
+      <For each={cogs()}>
+        {(cog) => <Cog position={cog.position} size={cog.size} rotationDirection={cog.rotationDirection} />}
+      </For>
     </SVG>
   );
 }
