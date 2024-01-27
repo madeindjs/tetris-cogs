@@ -4,8 +4,9 @@ import Cog from "./components/cog";
 import Grid from "./components/grid";
 import SVG from "./components/svg";
 import { useAnimationFrame } from "./hooks/use-animation-frame";
+import { useKeyboardControl } from "./hooks/use-keyboard-controls";
 import { RotationDirection, type Cog as CogProps, type Grid as GridProps } from "./model";
-import { moveCogs } from "./utils/cog.utils";
+import { moveCogsToBottom } from "./utils/cog.utils";
 
 function App() {
   const width = 700;
@@ -23,9 +24,12 @@ function App() {
     { position: [10, 60], size: 10, rotationDirection: RotationDirection.Clockwise },
   ]);
 
-  function tick() {
-    const newCogs = moveCogs(cogs(), grid);
+  useKeyboardControl({
+    onRight: () => {},
+  });
 
+  function tick() {
+    const newCogs = moveCogsToBottom(cogs(), grid);
     setCogs(newCogs);
   }
 
