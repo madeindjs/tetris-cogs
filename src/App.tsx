@@ -4,7 +4,7 @@ import Cog from "./components/cog";
 import Grid from "./components/grid";
 import SVG from "./components/svg";
 import { useAnimationFrame } from "./hooks/use-animation-frame";
-import type { Cog as CogProps, Grid as GridProps } from "./model";
+import { RotationDirection, type Cog as CogProps, type Grid as GridProps } from "./model";
 import { moveCogs } from "./utils/cog.utils";
 
 function App() {
@@ -13,13 +13,14 @@ function App() {
   const gridGap = 5;
 
   const grid: GridProps = {
-    viewBox: [0, 0, 100, 60],
+    viewBox: [0, 0, 200, 300],
     gap: 10,
   };
 
   const [cogs, setCogs] = createSignal<CogProps[]>([
-    { position: [10, 0], size: 10, rotationDirection: "clock" },
-    { position: [10, 30], size: 10, rotationDirection: "anti" },
+    { position: [10, 0], size: 10, rotationDirection: RotationDirection.Clockwise },
+    { position: [10, 30], size: 10, rotationDirection: RotationDirection.Clockwise },
+    { position: [10, 60], size: 10, rotationDirection: RotationDirection.Clockwise },
   ]);
 
   function tick() {

@@ -4,8 +4,14 @@ export type Grid = { viewBox: ViewBox; gap: number };
 
 export type ViewBox = [x: number, y: number, width: number, height: number];
 
+export enum RotationDirection {
+  Clockwise = 1,
+  Anti = -1,
+  None = 0,
+}
+
 export type Cog = {
   size: number;
   position: Point;
-  rotationDirection: "clock" | "anti";
+  rotationDirection: RotationDirection;
 };

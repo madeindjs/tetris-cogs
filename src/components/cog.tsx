@@ -14,7 +14,7 @@ export default function Cog({ size, position: [x, y], rotationDirection }: CogPr
         attributeType="XML"
         type="rotate"
         from={`0 ${x} ${y}`}
-        to={`${rotationDirection === "clock" ? 360 : -360} ${x} ${y}`}
+        to={`${rotationDirection * 360} ${x} ${y}`}
         dur="10s"
         repeatCount="indefinite"
       />
