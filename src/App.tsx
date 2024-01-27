@@ -9,7 +9,7 @@ import type { Cog as CogProps, ViewBox } from "./model";
 function App() {
   const width = 700;
   const height = 700;
-  const viewBox: ViewBox = [0, 0, 100, 100];
+  const viewBox: ViewBox = [0, 0, 100, 200];
   const gridGap = 10;
 
   const [cogs, setCogs] = createSignal<CogProps[]>([
@@ -24,7 +24,8 @@ function App() {
     const yMax = viewBox[3];
     const yNew = y + gridGap;
 
-    if (yNew + cog.size / 2 > yMax) return cog;
+    const isOutside = yNew + cog.size / 2 >= yMax;
+    if (isOutside) return cog;
 
     return { ...cog, position: [x, yNew] };
   }
@@ -35,7 +36,7 @@ function App() {
     setCogs(newCogs);
   }
 
-  useAnimationFrame(tick, 1_000);
+  useAnimationFrame(tick, 500);
 
   return (
     <SVG width={width} height={height} viewBox={viewBox.join(" ")}>

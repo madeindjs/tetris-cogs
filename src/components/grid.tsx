@@ -10,13 +10,13 @@ type LinePoints = [x1: number, y1: number, x2: number, y2: number];
 
 export default function Grid({ viewBox: [x, y, width, height], gap }: Props) {
   function* getColumns(): Generator<LinePoints> {
-    for (let i = x; i < width; i += gap) {
+    for (let i = x; i <= width; i += gap) {
       yield [i, 0, i, height];
     }
   }
 
   function* getRows(): Generator<LinePoints> {
-    for (let i = x; i < height; i += gap) {
+    for (let i = x; i <= height; i += gap) {
       yield [0, i, width, i];
     }
   }
