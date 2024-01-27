@@ -4,13 +4,18 @@ import Cog from "./components/cog";
 import Grid from "./components/grid";
 import SVG from "./components/svg";
 import { useAnimationFrame } from "./hooks/use-animation-frame";
-import type { Cog as CogProps, ViewBox } from "./model";
+import type { Cog as CogProps, Grid as GridProps } from "./model";
+import { moveCogs } from "./utils/cog.utils";
 
 function App() {
   const width = 700;
   const height = 700;
-  const viewBox: ViewBox = [0, 0, 100, 200];
-  const gridGap = 10;
+  const gridGap = 5;
+
+  const grid: GridProps = {
+    viewBox: [0, 0, 100, 60],
+    gap: 10,
+  };
 
   const [cogs, setCogs] = createSignal<CogProps[]>([
     { position: [10, 0], size: 10 },
@@ -19,19 +24,8 @@ function App() {
     { position: [90, 0], size: 20 },
   ]);
 
-  function moveCog(cog: CogProps): CogProps {
-    const [x, y] = cog.position;
-    const yMax = viewBox[3];
-    const yNew = y + gridGap;
-
-    const isOutside = yNew + cog.size / 2 >= yMax;
-    if (isOutside) return cog;
-
-    return { ...cog, position: [x, yNew] };
-  }
-
   function tick() {
-    const newCogs = cogs().map(moveCog);
+    const newCogs = moveCogs(cogs(), grid);
 
     setCogs(newCogs);
   }
@@ -39,8 +33,8 @@ function App() {
   useAnimationFrame(tick, 500);
 
   return (
-    <SVG width={width} height={height} viewBox={viewBox.join(" ")}>
-      <Grid viewBox={viewBox} gap={gridGap} />
+    <SVG width={width} height={height} viewBox={grid.viewBox.join(" ")}>
+      <Grid viewBox={grid.viewBox} gap={gridGap} />
       <For each={cogs()}>{(cog) => <Cog position={cog.position} size={cog.size} />}</For>
     </SVG>
   );
