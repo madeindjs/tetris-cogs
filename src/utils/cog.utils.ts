@@ -15,7 +15,7 @@ function isOutside(cog: Cog, grid: Grid) {
   return false;
 }
 
-function isColliding(cog: Cog, others: Cog[]) {
+export function isColliding(cog: Cog, others: Cog[]) {
   return others.some((c) =>
     isCirclesIntersect(c.position[0], c.position[1], c.size, cog.position[0], cog.position[1], cog.size)
   );

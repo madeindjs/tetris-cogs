@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import { RotationDirection, type Cog, type Grid } from "../model";
-import { computeRotationDirection, getNeighborsCogs, isSameCog, moveCog } from "../utils/cog.utils";
+import { computeRotationDirection, getNeighborsCogs, isColliding, isSameCog, moveCog } from "../utils/cog.utils";
 
 export function useGameState(grid: Grid, tickMove = 10) {
   const buildDefaultCog = (): Cog => ({
@@ -9,14 +9,17 @@ export function useGameState(grid: Grid, tickMove = 10) {
     rotationDirection: RotationDirection.Clockwise,
   });
 
-  const [activeCog, setActiveCog] = createSignal<Cog>(buildDefaultCog());
+  const [activeCog, setActiveCog] = createSignal<Cog | undefined>(buildDefaultCog());
   const [cogs, setCogs] = createSignal<Cog[]>([]);
 
   function tick() {
-    const newCog = moveCog(cogs(), activeCog(), grid, [0, tickMove]);
+    const cog = activeCog();
+    if (!cog) return;
+
+    const newCog = moveCog(cogs(), cog, grid, [0, tickMove]);
 
     // cog succeed to move, OK
-    if (isSameCog(newCog, activeCog())) {
+    if (isSameCog(newCog, cog)) {
       addStaticCog(newCog);
     } else {
       setActiveCog(newCog);
@@ -25,7 +28,6 @@ export function useGameState(grid: Grid, tickMove = 10) {
 
   function addStaticCog(cog: Cog) {
     const colliding = getNeighborsCogs(cog, cogs());
-    console.log(colliding);
     if (!colliding.length) {
       setCogs([...cogs(), cog]);
       setActiveCog(buildDefaultCog());
@@ -36,39 +38,28 @@ export function useGameState(grid: Grid, tickMove = 10) {
       (acc, c) => computeRotationDirection(acc, c.rotationDirection),
       cog.rotationDirection
     );
-    const newCog: Cog = {
-      ...cog,
-      rotationDirection: newRotationDirection,
-    };
 
-    setCogs([...cogs(), newCog]);
-    setActiveCog({
-      position: [10, 0],
-      size: 10,
-      rotationDirection: RotationDirection.Clockwise,
-    });
-  }
+    //  add a new cog
+    setCogs([...cogs(), { ...cog, rotationDirection: newRotationDirection }]);
+    setActiveCog(undefined);
 
-  /**
-   * Compute the new rotation.
-   */
-  function cleanup() {
-    // const newRotationDirection = colliding.reduce(
-    //   (acc, c) => computeRotationDirection(acc, c.rotationDirection),
-    //   newCog.rotationDirection
-    // );
-    // return {
-    //   ...cog,
-    //   rotationDirection: newRotationDirection,
-    // };
+    const newCog = buildDefaultCog();
+
+    if (!isColliding(newCog, cogs())) {
+      setActiveCog(newCog);
+    }
   }
 
   function moveLeft() {
-    setActiveCog(moveCog(cogs(), activeCog(), grid, [-grid.gap, 0]));
+    const cog = activeCog();
+    if (!cog) return;
+    setActiveCog(moveCog(cogs(), cog, grid, [-grid.gap, 0]));
   }
 
   function moveRight() {
-    setActiveCog(moveCog(cogs(), activeCog(), grid, [grid.gap, 0]));
+    const cog = activeCog();
+    if (!cog) return;
+    setActiveCog(moveCog(cogs(), cog, grid, [grid.gap, 0]));
   }
 
   function moveBottom() {
@@ -76,7 +67,7 @@ export function useGameState(grid: Grid, tickMove = 10) {
   }
 
   return {
-    cogs: () => [...cogs(), activeCog()],
+    cogs: () => [...cogs(), activeCog()].filter((c) => c !== undefined),
     tick,
     moveLeft,
     moveRight,
