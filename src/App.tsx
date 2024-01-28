@@ -11,7 +11,6 @@ import { type Grid as GridProps } from "./model";
 function App() {
   const width = 700;
   const height = 700;
-  const gridGap = 5;
 
   const grid: GridProps = {
     viewBox: [0, 0, 100, 100],
@@ -26,11 +25,11 @@ function App() {
     onLeft: moveLeft,
   });
 
-  useAnimationFrame(tick, 500);
+  useAnimationFrame(tick, 100);
 
   return (
     <SVG width={width} height={height} viewBox={grid.viewBox.join(" ")}>
-      <Grid viewBox={grid.viewBox} gap={gridGap} />
+      <Grid viewBox={grid.viewBox} gap={grid.gap} />
       <For each={cogs()}>
         {(cog) => <Cog position={cog.position} size={cog.size} rotationDirection={cog.rotationDirection} />}
       </For>

@@ -1,5 +1,5 @@
 import type { Cog, Grid, Point, RotationDirection } from "../model";
-import { isCirclesIntersect, movePoint } from "./geometry.utils";
+import { isCirclesIntersect, isCirclesTouch, movePoint } from "./geometry.utils";
 
 function isOutside(cog: Cog, grid: Grid) {
   const [x, y] = cog.position;
@@ -21,13 +21,13 @@ function isColliding(cog: Cog, others: Cog[]) {
   );
 }
 
-function getCollidingCogs(cog: Cog, others: Cog[]) {
+export function getNeighborsCogs(cog: Cog, others: Cog[]) {
   return others.filter((c) =>
-    isCirclesIntersect(c.position[0], c.position[1], c.size, cog.position[0], cog.position[1], cog.size)
+    isCirclesTouch(c.position[0], c.position[1], c.size, cog.position[0], cog.position[1], cog.size)
   );
 }
 
-function computeRotationDirection(dir: RotationDirection, ...dirs: RotationDirection[]): RotationDirection {
+export function computeRotationDirection(dir: RotationDirection, ...dirs: RotationDirection[]): RotationDirection {
   for (const d of dirs) {
     dir = d * -1;
   }
@@ -39,28 +39,12 @@ export function isSameCog(a: Cog, b: Cog) {
 }
 
 export function moveCog(cogs: Cog[], cog: Cog, grid: Grid, move: Point): Cog {
-  const others = cogs.filter((c) => !isSameCog(c, cog));
-
   const newCog: Cog = {
     ...cog,
     position: movePoint(cog.position, move),
   };
 
-  if (isOutside(newCog, grid)) return cog;
-
-  const colliding = getCollidingCogs(newCog, others);
-
-  if (!colliding.length) return newCog;
-
-  const newRotationDirection = colliding.reduce(
-    (acc, c) => computeRotationDirection(acc, c.rotationDirection),
-    newCog.rotationDirection
-  );
-
-  return {
-    ...cog,
-    rotationDirection: newRotationDirection,
-  };
+  return isOutside(newCog, grid) || isColliding(newCog, cogs) ? cog : newCog;
 }
 
 export function moveCogsToBottom(cogs: Cog[], grid: Grid) {
