@@ -15,3 +15,8 @@ export type Cog = {
   position: Point;
   rotationDirection: RotationDirection;
 };
+
+export enum GameStatus {
+  InProgress = "in-progress",
+  Loose = "loose",
+}

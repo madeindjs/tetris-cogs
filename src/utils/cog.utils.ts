@@ -1,4 +1,5 @@
-import type { Cog, Grid, Point, RotationDirection } from "../model";
+import type { Cog, Grid, Point } from "../model";
+import { RotationDirection } from "../model";
 import { isCirclesIntersect, isCirclesTouch, movePoint } from "./geometry.utils";
 
 function isOutside(cog: Cog, grid: Grid) {
@@ -49,4 +50,8 @@ export function moveCog(cogs: Cog[], cog: Cog, grid: Grid, move: Point): Cog {
 
 export function moveCogsToBottom(cogs: Cog[], grid: Grid) {
   return cogs.map((c) => moveCog(cogs, c, grid, [0, grid.gap]));
+}
+
+export function getOppositeRotation(rotation: RotationDirection): RotationDirection {
+  return rotation * -1;
 }

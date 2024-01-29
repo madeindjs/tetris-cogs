@@ -29,7 +29,9 @@ export default function Grid({ viewBox: [x, y, width, height], gap }: Props) {
   return (
     <g>
       <For each={Array.from(getLinesPoints())}>
-        {([x1, y1, x2, y2]) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="gray" />}
+        {([x1, y1, x2, y2]) => (
+          <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="lightgray" stroke-width={0.5} class="stroke-neutral" />
+        )}
       </For>
     </g>
   );
