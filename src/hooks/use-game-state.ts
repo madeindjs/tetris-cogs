@@ -2,6 +2,7 @@ import { createEffect, createSignal, on } from "solid-js";
 import type { Cog, Grid, Line, Point } from "../model";
 import { GameStatus, RotationDirection } from "../model";
 import { getNeighborsCogs, getOppositeRotation, isColliding, isSameCog, moveCog } from "../utils/cog.utils";
+import { getCompleteLines } from "../utils/game.utils";
 
 function getRandomDirection(): RotationDirection {
   const rand = Math.random();
@@ -73,21 +74,15 @@ export function useGameState(grid: Grid, tickMove = 10) {
     }
   }
 
-  function* getRows() {
-    for (let index = grid.viewBox[1]; index < grid.viewBox[3]; index += grid.gap) {
-      yield index;
-    }
-  }
-
   createEffect(
     on(
       () => links(),
       (current) => {
         for (const link of current) checkLink(link);
 
-        // check if one line is complete
-
-        // type LineCount =
+        const completeLines = getCompleteLines(current, grid);
+        console.log(completeLines);
+        // TODO
       }
     )
   );

@@ -36,7 +36,12 @@ export function computeRotationDirection(dir: RotationDirection, ...dirs: Rotati
 }
 
 export function isSameCog(a: Cog, b: Cog) {
-  return a.size === b.size && a.position[0] === b.position[0] && a.position[1] === b.position[1];
+  return (
+    a.size === b.size &&
+    a.position[0] === b.position[0] &&
+    a.position[1] === b.position[1] &&
+    a.rotationDirection === b.rotationDirection
+  );
 }
 
 export function moveCog(cogs: Cog[], cog: Cog, grid: Grid, move: Point): Cog {
@@ -53,5 +58,5 @@ export function moveCogsToBottom(cogs: Cog[], grid: Grid) {
 }
 
 export function getOppositeRotation(rotation: RotationDirection): RotationDirection {
-  return rotation * -1;
+  return rotation === 0 ? 0 : rotation * -1;
 }
