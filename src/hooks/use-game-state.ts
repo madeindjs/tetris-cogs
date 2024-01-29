@@ -1,13 +1,7 @@
 import { createEffect, createSignal, on } from "solid-js";
-import { GameStatus, Point, RotationDirection, type Cog, type Grid } from "../model";
-import {
-  computeRotationDirection,
-  getNeighborsCogs,
-  getOppositeRotation,
-  isColliding,
-  isSameCog,
-  moveCog,
-} from "../utils/cog.utils";
+import type { Cog, Grid, Line, Point } from "../model";
+import { GameStatus, RotationDirection } from "../model";
+import { getNeighborsCogs, getOppositeRotation, isColliding, isSameCog, moveCog } from "../utils/cog.utils";
 
 function getRandomDirection(): RotationDirection {
   const rand = Math.random();
@@ -31,8 +25,8 @@ export function useGameState(grid: Grid, tickMove = 10) {
   const [activeCog, setActiveCog] = createSignal<Cog | undefined>(buildDefaultCog());
   const [nextCog, setNextCog] = createSignal(buildDefaultCog());
   const [cogs, setCogs] = createSignal<Cog[]>([]);
-  const [links, setLinks] = createSignal<[Point, Point][]>([]);
-  const [brokenLinks, setBrokenLinks] = createSignal<[Point, Point][]>([]);
+  const [links, setLinks] = createSignal<Line[]>([]);
+  const [brokenLinks, setBrokenLinks] = createSignal<Line[]>([]);
 
   function tick() {
     if (gameStatus() === GameStatus.Loose) return false;
@@ -60,7 +54,10 @@ export function useGameState(grid: Grid, tickMove = 10) {
     setCogs(copy);
   }
 
-  function checkLink([from, to]: [Point, Point]) {
+  /**
+   * Check that every lines are coherents
+   */
+  function checkLink([from, to]: Line) {
     const cogA = getCogOnPoint(from);
     const cogB = getCogOnPoint(to);
     if (!cogA || !cogB) throw Error();
@@ -76,11 +73,21 @@ export function useGameState(grid: Grid, tickMove = 10) {
     }
   }
 
+  function* getRows() {
+    for (let index = grid.viewBox[1]; index < grid.viewBox[3]; index += grid.gap) {
+      yield index;
+    }
+  }
+
   createEffect(
     on(
       () => links(),
       (current) => {
         for (const link of current) checkLink(link);
+
+        // check if one line is complete
+
+        // type LineCount =
       }
     )
   );
@@ -104,7 +111,7 @@ export function useGameState(grid: Grid, tickMove = 10) {
     }
 
     setCogs([...cogs(), cog]);
-    setLinks([...links(), ...colliding.map((c) => [c.position, cog.position] as [Point, Point])]);
+    setLinks([...links(), ...colliding.map((c) => [c.position, cog.position] as Line)]);
 
     if (!isColliding(nextCog(), cogs())) {
       setActiveCog(nextCog());
@@ -115,41 +122,6 @@ export function useGameState(grid: Grid, tickMove = 10) {
       setActiveCog(undefined);
       return false;
     }
-  }
-
-  function checkRotations() {
-    let needUpdate = false;
-
-    const newCogs = cogs().map<Cog>((cog) => {
-      const others = cogs().filter((c) => isSameCog(c, cog));
-      const neighbors = getNeighborsCogs(cog, others);
-
-      // for static cog, just compute the new rotation
-      if (cog.rotationDirection === RotationDirection.None) {
-        const newRotationDirection = neighbors.reduce(
-          (acc, c) => computeRotationDirection(acc, c.rotationDirection),
-          RotationDirection.Clockwise
-        );
-        needUpdate = true;
-        return { ...cog, rotationDirection: newRotationDirection };
-      }
-
-      const wrong = neighbors.filter((c) => {
-        if (c.rotationDirection === RotationDirection.None) return false;
-        return c.rotationDirection === cog.rotationDirection;
-      });
-
-      console.log(wrong, neighbors);
-
-      if (wrong.length > 0) {
-        setBrokenLinks(wrong.map((c) => [c.position, cog.position] as [Point, Point]));
-        setGameStatus(GameStatus.Loose);
-      }
-
-      return cog;
-    });
-
-    if (needUpdate) setCogs(newCogs);
   }
 
   function moveLeft() {

@@ -11,6 +11,7 @@ import { GameStatus, type Grid as GridProps } from "./model";
 function App() {
   const width = 700;
   const height = 700;
+  const speed = 300;
 
   const grid: GridProps = {
     viewBox: [0, 0, 100, 100],
@@ -26,7 +27,7 @@ function App() {
     onLeft: moveLeft,
   });
 
-  useAnimationFrame(tick, 200);
+  useAnimationFrame(tick, speed);
 
   return (
     <div class="h-screen w-screen flex items-center justify-center">
