@@ -3,7 +3,7 @@ import type { Cog, CogGroup, Grid } from "../model";
 import { Rotation } from "../model";
 import { buildCogGroup, moveCogGroup } from "../utils/cog-group.utils";
 import { getNeighborsCogsBottom } from "../utils/cog.utils";
-import { computeCogsRotation } from "../utils/game.utils";
+import { checkAndRemoveCompleteLines, computeCogsRotation } from "../utils/game.utils";
 
 function getRandomDirection(): Rotation {
   const rand = Math.random();
@@ -43,7 +43,7 @@ export function useGameState(grid: Grid) {
 
     if (!isTouchingSomething()) return setActiveCogGroup(newCogGroup);
 
-    setCogs(computeCogsRotation([...cogs(), ...newCogGroup]));
+    setCogs(computeCogsRotation(checkAndRemoveCompleteLines([...cogs(), ...newCogGroup], grid)));
     setActiveCogGroup(nextCogGroup());
     setNextCogGroup(buildDefaultCogGroup());
   }
