@@ -2,9 +2,7 @@ import { Rotation, type Cog, type Grid } from "../model";
 import { getNeighborsCogs, getOppositeRotation, isSameCog } from "./cog.utils";
 import { movePoint } from "./geometry.utils";
 
-// TODO: doesn't work
 export function getCompleteLines(cogs: Cog[], grid: Grid): number[] {
-  // todo: refactor
   const points = cogs
     .map((c) => c.position)
     .reduce<Record<number, Set<number>>>((acc, [x, y]) => {
@@ -13,15 +11,12 @@ export function getCompleteLines(cogs: Cog[], grid: Grid): number[] {
       return acc;
     }, {});
 
-  console.log(points);
-
   return Object.entries(points)
     .filter(([_, ys]) => ys.size === grid.size[1])
     .map(([x]) => Number(x));
 }
 
 export function removeLine(cogs: Cog[], y: number) {
-  console.log("removeLine", y);
   return cogs
     .filter((cog) => cog.position[1] !== y)
     .map<Cog>((cog) => {
@@ -30,6 +25,7 @@ export function removeLine(cogs: Cog[], y: number) {
     });
 }
 
+// TODO: doesn't work
 export function checkAndRemoveCompleteLines(cogs: Cog[], grid: Grid) {
   return getCompleteLines(cogs, grid).reduce<Cog[]>((acc, v) => removeLine(acc, v), cogs);
 }

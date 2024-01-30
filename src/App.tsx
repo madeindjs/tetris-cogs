@@ -1,5 +1,6 @@
 import { For, Show } from "solid-js";
 import Cog from "./components/cog";
+import CogGroup from "./components/cog-group";
 import CogGroupNextPreview from "./components/cog-group-next-preview";
 import CogsLink from "./components/cogs-link";
 import Grid from "./components/grid";
@@ -21,7 +22,8 @@ function App() {
 
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score } = useGameState(grid);
+  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score, activeCogGroup } =
+    useGameState(grid);
 
   const links = useLinks(cogs);
 
@@ -42,6 +44,7 @@ function App() {
           <For each={cogs()}>
             {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
           </For>
+          <Show when={activeCogGroup()}>{(group) => <CogGroup cogGroup={group} />}</Show>
           <For each={links()}>
             {({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}
           </For>

@@ -1,10 +1,10 @@
-import { For, type Accessor } from "solid-js";
-import type { CogGroup, ViewBox } from "../model";
-import Cog from "./cog";
+import { type Accessor } from "solid-js";
+import type { CogGroup as CogGroupModel, ViewBox } from "../model";
+import CogGroup from "./cog-group";
 import SVG from "./svg";
 
 type Props = {
-  cogGroup: Accessor<CogGroup>;
+  cogGroup: Accessor<CogGroupModel>;
 };
 
 export default function CogGroupNextPreview({ cogGroup }: Props) {
@@ -21,9 +21,7 @@ export default function CogGroupNextPreview({ cogGroup }: Props) {
 
   return (
     <SVG width={100} height={100} viewBox={viewBox().join(" ")}>
-      <For each={cogGroup()}>
-        {(cog) => <Cog position={() => cog.position} size={() => 1} rotation={() => cog.rotation} />}
-      </For>
+      <CogGroup cogGroup={cogGroup} />
     </SVG>
   );
 }

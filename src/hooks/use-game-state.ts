@@ -35,6 +35,7 @@ export function useGameState(grid: Grid) {
 
     const newCogGroup = moveCogGroup(cogs(), cogGroup, [0, 1], grid.size);
 
+    // TODO: let extra move once touch something
     function isTouchingSomething() {
       if (newCogGroup.some((c) => c.position[1] === grid.size[1] - 1)) return true;
 
@@ -64,10 +65,11 @@ export function useGameState(grid: Grid) {
   }
 
   return {
-    // TODO: separate this to improve memo
-    cogs: () => [...cogs(), ...(activeCogGroup() ?? [])] as Cog[],
+    cogs,
+    activeCogGroup,
     tick,
     score,
+    // TODO: add possibility to rotate active
     moveLeft: () => moveActive(-1),
     moveRight: () => moveActive(1),
     moveBottom: tick,
