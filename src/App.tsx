@@ -6,17 +6,18 @@ import SVG from "./components/svg";
 import { useAnimationFrame } from "./hooks/use-animation-frame";
 import { useGameState } from "./hooks/use-game-state";
 import { useKeyboardControl } from "./hooks/use-keyboard-controls";
-import { GameStatus, type Grid as GridProps } from "./model";
+import { GameStatus, ViewBox, type Grid as GridProps } from "./model";
 
 function App() {
-  const width = 700;
-  const height = 700;
+  const width = 400;
+  const height = 800;
   const speed = 300;
 
-  const grid: GridProps = {
-    viewBox: [0, 0, 300, 300],
-    gap: 10,
-  };
+  const grid: GridProps = { size: [10, 20] };
+
+  const cogSize = 1;
+
+  const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
   const { cogs, tick, moveLeft, moveRight, moveBottom, gameStatus, links, nextCog, reset, brokenLinks, score } =
     useGameState(grid);
@@ -32,15 +33,11 @@ function App() {
   return (
     <div class="h-screen w-screen flex items-center justify-center">
       <div class="flex gap-2 border rounded">
-        <SVG width={width} height={height} viewBox={grid.viewBox.join(" ")} class="bg-base-300">
-          <Grid viewBox={grid.viewBox} gap={grid.gap} />
+        <SVG width={width} height={height} viewBox={viewBox.join(" ")} class="bg-base-300">
+          <Grid gridSize={grid.size} />
           <For each={cogs()}>
             {(cog) => (
-              <Cog
-                position={() => cog.position}
-                size={() => cog.size}
-                rotationDirection={() => cog.rotationDirection}
-              />
+              <Cog position={() => cog.position} size={() => cogSize} rotationDirection={() => cog.rotationDirection} />
             )}
           </For>
           <For each={links()}>{([from, to]) => <CogsLink from={from} to={to} />}</For>
@@ -52,10 +49,10 @@ function App() {
           <p class="text-xl">Next:</p>
           <Show when={nextCog()}>
             {(cog) => (
-              <SVG width={100} height={100} viewBox={[0, 0, 20, 20].join(" ")}>
+              <SVG width={100} height={100} viewBox={[0, 0, 1, 1].join(" ")}>
                 <Cog
-                  position={() => [10, 10]}
-                  size={() => cog().size}
+                  position={() => [0.5, 0.5]}
+                  size={() => cogSize}
                   rotationDirection={() => cog().rotationDirection}
                 />
               </SVG>

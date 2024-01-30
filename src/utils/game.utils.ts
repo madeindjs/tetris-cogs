@@ -11,10 +11,8 @@ export function getCompleteLines(links: Line[], grid: Grid): number[] {
       return acc;
     }, {});
 
-  const max = (grid.viewBox[2] - grid.viewBox[0]) / (grid.gap * 2);
-
   return Object.entries(points)
-    .filter(([_, ys]) => ys.size === max)
+    .filter(([_, ys]) => ys.size === grid.size[1])
     .map(([x]) => Number(x));
 }
 
@@ -35,12 +33,12 @@ export function buildLinks(cogs: Cog[]): Line[] {
   return links;
 }
 
-export function removeLine(cogs: Cog[], y: number, gap: number): { cogs: Cog[]; links: Line[]; removeCount: number } {
+export function removeLine(cogs: Cog[], y: number): { cogs: Cog[]; links: Line[]; removeCount: number } {
   const newCogs = cogs
     .filter((cog) => cog.position[1] !== y)
     .map((cog) => {
       if (cog.position[1] > y) return cog;
-      return { ...cog, position: movePoint(cog.position, [0, gap * 2]) };
+      return { ...cog, position: movePoint(cog.position, [0, 1]) };
     });
 
   return {

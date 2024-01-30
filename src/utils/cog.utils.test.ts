@@ -3,17 +3,8 @@ import { Cog, RotationDirection } from "../model";
 import { getOppositeRotation, isSameCog } from "./cog.utils";
 
 describe(isSameCog.name, () => {
-  const a: Cog = {
-    position: [0, 0],
-    rotationDirection: RotationDirection.Anti,
-    size: 1,
-  };
-
-  const b: Cog = {
-    position: [0, 0],
-    rotationDirection: RotationDirection.Clockwise,
-    size: 1,
-  };
+  const a: Cog = { position: [0, 0], rotationDirection: RotationDirection.Anti };
+  const b: Cog = { position: [0, 0], rotationDirection: RotationDirection.Clockwise };
 
   it("should be same", () => {
     expect(isSameCog(a, a)).toBe(true);

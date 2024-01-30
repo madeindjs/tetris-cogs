@@ -1,7 +1,9 @@
 export type Point = [x: number, y: number];
-export type Line = [Point, Point];
+export type Line = [from: Point, to: Point];
 
-export type Grid = { viewBox: ViewBox; gap: number };
+export type GridSize = [xCount: number, yCount: number];
+
+export type Grid = { size: Point };
 
 export type ViewBox = [x: number, y: number, width: number, height: number];
 
@@ -12,7 +14,6 @@ export enum RotationDirection {
 }
 
 export type Cog = {
-  size: number;
   position: Point;
   rotationDirection: RotationDirection;
 };

@@ -9,11 +9,10 @@ type Props = {
 
 export default function Cog({ size, position, rotationDirection }: Props) {
   const color = () => getCogColor(rotationDirection());
-
-  const toothOfsset = () => size() * 0.15;
-  const baseCircleRadius = () => size() - toothOfsset();
+  const radius = () => size() / 2;
+  const toothOfsset = () => radius() * 0.15;
+  const baseCircleRadius = () => radius() - toothOfsset();
   const innerCircleRadius = () => baseCircleRadius() / 2;
-
   const x = () => position()[0];
   const y = () => position()[1];
 
@@ -21,10 +20,10 @@ export default function Cog({ size, position, rotationDirection }: Props) {
     const transform = `rotate(${props.rotation} ${x()} ${y()})`;
     return (
       <rect
-        x={x() - 1}
-        y={y() - size()}
+        x={x() - toothOfsset() / 2}
+        y={y() - radius()}
         width={toothOfsset()}
-        height={size() * 2}
+        height={size()}
         class={color()}
         rx={toothOfsset()}
         transform={transform}
@@ -33,7 +32,7 @@ export default function Cog({ size, position, rotationDirection }: Props) {
   }
 
   return (
-    <g aria-describedby="cog">
+    <g aria-label="Cog">
       <circle r={baseCircleRadius()} cx={x()} cy={y()} class={color()} />
       <For each={[0, 20, 40, 60, 80, 100, 120, 140, 160]}>{(angle) => <Tooth rotation={angle} />}</For>
       <circle r={innerCircleRadius()} cx={x()} cy={y()} fill="white" class="fill-base-300" />

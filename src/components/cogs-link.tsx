@@ -8,13 +8,13 @@ type Props = {
 
 export default function CogsLink({ from, to, error }: Props) {
   return (
-    <g>
+    <g aria-label="Link">
       <line
         x1={from[0]}
         y1={from[1]}
         x2={to[0]}
         y2={to[1]}
-        stroke-width={1}
+        stroke-width={0.05}
         class={error ? "stroke-error" : "stroke-base-content"}
       />
       <Handle point={from} error={error} />
@@ -26,5 +26,13 @@ export default function CogsLink({ from, to, error }: Props) {
 type HandleProps = { point: Point; error?: boolean };
 
 function Handle({ point: [x, y], error }: HandleProps) {
-  return <circle cx={x} cy={y} r={1} class={error ? "stroke-error" : "stroke-base-content"} />;
+  return (
+    <circle
+      cx={x}
+      cy={y}
+      r={0.1}
+      stroke-width={0.05}
+      class={(error ? "stroke-error" : "stroke-base-content") + " fill-base-300"}
+    />
+  );
 }

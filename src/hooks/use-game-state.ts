@@ -15,15 +15,9 @@ function getRandomDirection(): RotationDirection {
   }
 }
 
-function getRandomSize(gap: number): number {
-  return gap;
-  return Math.random() > 0.7 ? gap * 2 : gap;
-}
-
-export function useGameState(grid: Grid, tickMove = 10) {
+export function useGameState(grid: Grid) {
   const buildDefaultCog = (): Cog => ({
-    position: [grid.viewBox[2] / 2, 0],
-    size: getRandomSize(grid.gap),
+    position: [grid.size[0] / 2, 0],
     rotationDirection: getRandomDirection(),
   });
 
@@ -41,7 +35,7 @@ export function useGameState(grid: Grid, tickMove = 10) {
     const cog = activeCog();
     if (!cog) return;
 
-    const newCog = moveCog(cogs(), cog, grid, [0, tickMove]);
+    const newCog = moveCog(cogs(), cog, grid.size, [0, 1]);
 
     // cog succeed to move, OK
     const ok = isSameCog(newCog, cog) ? addStaticCog(newCog) : setActiveCog(newCog);
@@ -90,7 +84,7 @@ export function useGameState(grid: Grid, tickMove = 10) {
 
         const result = completeLines.reduce<{ links: Line[]; cogs: Cog[]; removeCount: number }>(
           (acc, v) => {
-            const res = removeLine(acc.cogs, v, grid.gap);
+            const res = removeLine(acc.cogs, v);
 
             return { ...res, removeCount: acc.removeCount + res.removeCount };
           },
@@ -143,7 +137,7 @@ export function useGameState(grid: Grid, tickMove = 10) {
   function moveActive(direction: -1 | 1) {
     const cog = activeCog();
     if (!cog) return;
-    setActiveCog(moveCog(cogs(), cog, grid, [grid.gap * 2 * direction, 0]));
+    setActiveCog(moveCog(cogs(), cog, grid.size, [1 * direction, 0]));
   }
 
   function reset() {
