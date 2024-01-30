@@ -10,57 +10,57 @@ export function getRandomCogGroupShape(): CogGroupShape {
 }
 
 export function buildCogGroup(origin: Cog, shape: CogGroupShape = getRandomCogGroupShape()): CogGroup {
-  const { position, rotationDirection } = origin;
+  const { position, rotation } = origin;
 
   switch (shape) {
     case CogGroupShape.I:
       return [
         origin,
-        { position: movePoint(position, [0, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [0, 2]), rotationDirection },
-        { position: movePoint(position, [0, 3]), rotationDirection: getOppositeRotation(rotationDirection) },
+        { position: movePoint(position, [0, 1]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [0, 2]), rotation },
+        { position: movePoint(position, [0, 3]), rotation: getOppositeRotation(rotation) },
       ];
     case CogGroupShape.J:
       return [
         origin,
-        { position: movePoint(position, [0, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [1, 1]), rotationDirection },
-        { position: movePoint(position, [2, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
+        { position: movePoint(position, [0, 1]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [1, 1]), rotation },
+        { position: movePoint(position, [2, 1]), rotation: getOppositeRotation(rotation) },
       ];
     case CogGroupShape.L:
       return [
         origin,
-        { position: movePoint(position, [0, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [0, 2]), rotationDirection },
-        { position: movePoint(position, [1, 2]), rotationDirection: getOppositeRotation(rotationDirection) },
+        { position: movePoint(position, [0, 1]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [0, 2]), rotation },
+        { position: movePoint(position, [1, 2]), rotation: getOppositeRotation(rotation) },
       ];
     case CogGroupShape.O:
       return [
         origin,
-        { position: movePoint(position, [0, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [1, 0]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [1, 1]), rotationDirection },
+        { position: movePoint(position, [0, 1]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [1, 0]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [1, 1]), rotation },
       ];
     case CogGroupShape.S:
       return [
         origin,
-        { position: movePoint(position, [1, 0]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [0, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [-1, 1]), rotationDirection },
+        { position: movePoint(position, [1, 0]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [0, 1]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [-1, 1]), rotation },
       ];
     case CogGroupShape.T:
       return [
         origin,
-        { position: movePoint(position, [-1, 0]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [1, 0]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [0, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
+        { position: movePoint(position, [-1, 0]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [1, 0]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [0, 1]), rotation: getOppositeRotation(rotation) },
       ];
     case CogGroupShape.Z:
       return [
         origin,
-        { position: movePoint(position, [-1, 0]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [0, 1]), rotationDirection: getOppositeRotation(rotationDirection) },
-        { position: movePoint(position, [1, 1]), rotationDirection },
+        { position: movePoint(position, [-1, 0]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [0, 1]), rotation: getOppositeRotation(rotation) },
+        { position: movePoint(position, [1, 1]), rotation },
       ];
   }
 }

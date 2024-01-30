@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { Cog, RotationDirection } from "../model";
+import { Cog, Rotation } from "../model";
 import { getOppositeRotation, isSameCog } from "./cog.utils";
 
 describe(isSameCog.name, () => {
-  const a: Cog = { position: [0, 0], rotationDirection: RotationDirection.Anti };
-  const b: Cog = { position: [0, 0], rotationDirection: RotationDirection.Clockwise };
+  const a: Cog = { position: [0, 0], rotation: Rotation.Anti };
+  const b: Cog = { position: [0, 0], rotation: Rotation.Clockwise };
 
   it("should be same", () => {
     expect(isSameCog(a, a)).toBe(true);
@@ -17,14 +17,14 @@ describe(isSameCog.name, () => {
 
 describe(getOppositeRotation.name, () => {
   it("should get anti", () => {
-    expect(getOppositeRotation(RotationDirection.Anti)).toBe(RotationDirection.Clockwise);
+    expect(getOppositeRotation(Rotation.Anti)).toBe(Rotation.Clockwise);
   });
 
   it("should get clock", () => {
-    expect(getOppositeRotation(RotationDirection.Clockwise)).toBe(RotationDirection.Anti);
+    expect(getOppositeRotation(Rotation.Clockwise)).toBe(Rotation.Anti);
   });
 
   it("should get same", () => {
-    expect(getOppositeRotation(RotationDirection.None)).toBe(RotationDirection.None);
+    expect(getOppositeRotation(Rotation.None)).toBe(Rotation.None);
   });
 });

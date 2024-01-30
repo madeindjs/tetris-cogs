@@ -7,7 +7,12 @@ export type Grid = { size: Point };
 
 export type ViewBox = [x: number, y: number, width: number, height: number];
 
-export enum RotationDirection {
+export type Link = {
+  points: Line;
+  broken?: boolean;
+};
+
+export enum Rotation {
   Clockwise = 1,
   Anti = -1,
   None = 0,
@@ -15,15 +20,10 @@ export enum RotationDirection {
 
 export type Cog = {
   position: Point;
-  rotationDirection: RotationDirection;
+  rotation: Rotation;
 };
 
 export type CogGroup = Cog[];
-
-export enum GameStatus {
-  InProgress = "in-progress",
-  Loose = "loose",
-}
 
 export enum CogGroupShape {
   /**

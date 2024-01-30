@@ -1,5 +1,5 @@
 import { useLines } from "../hooks/use-lines";
-import { Point, RotationDirection, type Cog, type Grid, type Line } from "../model";
+import { Rotation, type Cog, type Grid, type Line } from "../model";
 import { getNeighborsCogs, getOppositeRotation, isSameCog } from "./cog.utils";
 import { movePoint } from "./geometry.utils";
 
@@ -44,10 +44,8 @@ export function removeLine(cogs: Cog[], y: number): { cogs: Cog[]; links: Line[]
   };
 }
 
-export function checkAndRemoveCompleteLines(cogs: Cog[], links: Line[], grid: Grid, removeCount = 0) {
-  const completeLines = getCompleteLines(links, grid);
-
-  const res = completeLines.reduce<{ links: Line[]; cogs: Cog[]; removeCount: number }>(
+export function checkAndRemoveCompleteLines(cogs: Cog[], links: Line[], grid: Grid) {
+  return getCompleteLines(links, grid).reduce<{ links: Line[]; cogs: Cog[]; removeCount: number }>(
     (acc, v) => {
       const res = removeLine(acc.cogs, v);
       return { ...res, removeCount: acc.removeCount + res.removeCount };
@@ -55,44 +53,37 @@ export function checkAndRemoveCompleteLines(cogs: Cog[], links: Line[], grid: Gr
     {
       links,
       cogs: cogs,
-      removeCount,
+      removeCount: 0,
     }
   );
-
-  if (res.removeCount === removeCount) return res;
-
-  return checkAndRemoveCompleteLines(res.cogs, res.links, grid, res.removeCount);
 }
 
-export function computeCogsRotation(currentCogs: Cog[], links: Line[]) {
+export function computeCogsRotation(currentCogs: Cog[]) {
   const cogs = [...currentCogs];
-  const brokenLinks: Line[] = [];
-
-  const getCogOnPoint = ([x, y]: Point) => cogs.find((c) => c.position[0] === x && c.position[1] === y);
+  let changed = false;
 
   function updateCog(old: Cog, current: Cog) {
     const index = cogs.findIndex((c) => isSameCog(c, old));
-    if (index === -1) throw Error("cannot find cog");
+    if (index === -1) return console.error("cannot find cog");
     cogs[index] = current;
+    changed = true;
   }
 
-  function checkLink([from, to]: Line) {
-    const cogA = getCogOnPoint(from);
-    const cogB = getCogOnPoint(to);
-    if (!cogA || !cogB) throw Error();
+  do {
+    changed = false;
 
-    if (cogA.rotationDirection === RotationDirection.None && cogB.rotationDirection === RotationDirection.None) {
-      return;
-    } else if (cogA.rotationDirection === RotationDirection.None) {
-      updateCog(cogA, { ...cogA, rotationDirection: getOppositeRotation(cogB.rotationDirection) });
-    } else if (cogB.rotationDirection === RotationDirection.None) {
-      updateCog(cogB, { ...cogB, rotationDirection: getOppositeRotation(cogA.rotationDirection) });
-    } else if (cogA.rotationDirection === cogB.rotationDirection) {
-      brokenLinks.push([cogA.position, cogB.position]);
+    for (const cogA of cogs) {
+      const others = cogs.filter((c) => !isSameCog(c, cogA));
+
+      for (const cogB of getNeighborsCogs(cogA, others)) {
+        if (cogA.rotation === Rotation.None && cogB.rotation !== Rotation.None) {
+          updateCog(cogA, { ...cogA, rotation: getOppositeRotation(cogB.rotation) });
+        } else if (cogB.rotation === Rotation.None && cogA.rotation !== Rotation.None) {
+          updateCog(cogB, { ...cogB, rotation: getOppositeRotation(cogA.rotation) });
+        }
+      }
     }
-  }
+  } while (changed);
 
-  for (const link of links) checkLink(link);
-
-  return { cogs, brokenLinks };
+  return cogs;
 }

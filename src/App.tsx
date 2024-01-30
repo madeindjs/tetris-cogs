@@ -7,7 +7,8 @@ import SVG from "./components/svg";
 import { useAnimationFrame } from "./hooks/use-animation-frame";
 import { useGameState } from "./hooks/use-game-state";
 import { useKeyboardControl } from "./hooks/use-keyboard-controls";
-import { GameStatus, ViewBox, type Grid as GridProps } from "./model";
+import { useLinks } from "./hooks/use-links";
+import { ViewBox, type Grid as GridProps } from "./model";
 
 function App() {
   const width = 400;
@@ -20,8 +21,9 @@ function App() {
 
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, gameStatus, links, nextCogGroup, reset, brokenLinks, score } =
-    useGameState(grid);
+  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score } = useGameState(grid);
+
+  const links = useLinks(cogs);
 
   useKeyboardControl({
     onRight: moveRight,
@@ -37,12 +39,11 @@ function App() {
         <SVG width={width} height={height} viewBox={viewBox.join(" ")} class="bg-base-300">
           <Grid gridSize={grid.size} />
           <For each={cogs()}>
-            {(cog) => (
-              <Cog position={() => cog.position} size={() => cogSize} rotationDirection={() => cog.rotationDirection} />
-            )}
+            {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
           </For>
-          <For each={links()}>{([from, to]) => <CogsLink from={from} to={to} />}</For>
-          <For each={brokenLinks()}>{([from, to]) => <CogsLink from={from} to={to} error />}</For>
+          <For each={links()}>
+            {({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}
+          </For>
         </SVG>
         <div class="w-48 flex flex-col gap-2 p-2">
           <p class="text-xl">Score:</p>
@@ -51,7 +52,7 @@ function App() {
           <Show when={nextCogGroup()}>
             <CogGroupNextPreview cogGroup={nextCogGroup} />
           </Show>
-          <Show when={gameStatus() === GameStatus.Loose}>
+          <Show when={links().filter((b) => b.broken).length > 0}>
             <button onClick={reset} class="btn btn-primary">
               Retry
             </button>

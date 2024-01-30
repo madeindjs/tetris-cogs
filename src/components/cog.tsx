@@ -1,14 +1,14 @@
 import { For, type Accessor } from "solid-js";
-import { RotationDirection, type Point } from "../model";
+import { Rotation, type Point } from "../model";
 
 type Props = {
   size: Accessor<number>;
   position: Accessor<Point>;
-  rotationDirection: Accessor<RotationDirection>;
+  rotation: Accessor<Rotation>;
 };
 
-export default function Cog({ size, position, rotationDirection }: Props) {
-  const color = () => getCogColor(rotationDirection());
+export default function Cog({ size, position, rotation }: Props) {
+  const color = () => getCogColor(rotation());
   const radius = () => size() / 2;
   const toothOfsset = () => radius() * 0.15;
   const baseCircleRadius = () => radius() - toothOfsset();
@@ -41,7 +41,7 @@ export default function Cog({ size, position, rotationDirection }: Props) {
         attributeType="XML"
         type="rotate"
         from={`0 ${x()} ${y()}`}
-        to={`${rotationDirection() * 360} ${x()} ${y()}`}
+        to={`${rotation() * 360} ${x()} ${y()}`}
         dur="10s"
         repeatCount="indefinite"
       />
@@ -49,13 +49,13 @@ export default function Cog({ size, position, rotationDirection }: Props) {
   );
 }
 
-function getCogColor(rotationDirection: RotationDirection) {
-  switch (rotationDirection) {
-    case RotationDirection.Clockwise:
+function getCogColor(rotation: Rotation) {
+  switch (rotation) {
+    case Rotation.Clockwise:
       return "fill-blue-700";
-    case RotationDirection.Anti:
+    case Rotation.Anti:
       return "fill-green-700";
-    case RotationDirection.None:
+    case Rotation.None:
       return "fill-base-content";
   }
 }

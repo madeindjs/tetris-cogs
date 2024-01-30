@@ -22,7 +22,7 @@ export default function CogGroupNextPreview({ cogGroup }: Props) {
   return (
     <SVG width={100} height={100} viewBox={viewBox().join(" ")}>
       <For each={cogGroup()}>
-        {(cog) => <Cog position={() => cog.position} size={() => 1} rotationDirection={() => cog.rotationDirection} />}
+        {(cog) => <Cog position={() => cog.position} size={() => 1} rotation={() => cog.rotation} />}
       </For>
     </SVG>
   );

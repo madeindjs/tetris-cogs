@@ -1,5 +1,5 @@
 import type { Cog, Grid, Point } from "../model";
-import { RotationDirection } from "../model";
+import { Rotation } from "../model";
 import { getNeighborsPoints, isPointInsideArea, isSamePoint, movePoint } from "./geometry.utils";
 
 export function isColliding(cog: Cog, others: Cog[]) {
@@ -16,13 +16,13 @@ export function getNeighborsCogsBottom(cog: Cog, others: Cog[]) {
   return others.find((o) => isSamePoint(point, o.position));
 }
 
-export function computeRotationDirection(dir: RotationDirection, ...dirs: RotationDirection[]): RotationDirection {
+export function computeRotationDirection(dir: Rotation, ...dirs: Rotation[]): Rotation {
   for (const d of dirs) dir = d * -1;
   return dir;
 }
 
 export function isSameCog(a: Cog, b: Cog) {
-  return isSamePoint(a.position, b.position) && a.rotationDirection === b.rotationDirection;
+  return isSamePoint(a.position, b.position) && a.rotation === b.rotation;
 }
 
 export function moveCog(cogs: Cog[], cog: Cog, gridSize: Point, move: Point): Cog {
@@ -34,6 +34,6 @@ export function moveCogsToBottom(cogs: Cog[], grid: Grid) {
   return cogs.map((c) => moveCog(cogs, c, grid.size, [0, 1]));
 }
 
-export function getOppositeRotation(rotation: RotationDirection): RotationDirection {
+export function getOppositeRotation(rotation: Rotation): Rotation {
   return rotation === 0 ? 0 : rotation * -1;
 }
