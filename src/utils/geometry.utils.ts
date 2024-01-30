@@ -16,6 +16,10 @@ export function isCirclesTouch(x1: number, y1: number, r1: number, x2: number, y
   return distanceBetweenCenters === r1 + r2;
 }
 
+export function isSamePoint(a: Point, b: Point) {
+  return a[0] === b[0] && a[1] === b[1];
+}
+
 export function movePoint([x, y]: Point, [tx, ty]: Point): Point {
   return [x + tx, y + ty];
 }

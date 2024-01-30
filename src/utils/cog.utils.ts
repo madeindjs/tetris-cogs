@@ -1,6 +1,6 @@
 import type { Cog, Grid, Point } from "../model";
 import { RotationDirection } from "../model";
-import { isCirclesIntersect, isCirclesTouch, movePoint } from "./geometry.utils";
+import { isCirclesIntersect, isCirclesTouch, isSamePoint, movePoint } from "./geometry.utils";
 
 function isOutside(cog: Cog, grid: Grid) {
   const [x, y] = cog.position;
@@ -36,12 +36,7 @@ export function computeRotationDirection(dir: RotationDirection, ...dirs: Rotati
 }
 
 export function isSameCog(a: Cog, b: Cog) {
-  return (
-    a.size === b.size &&
-    a.position[0] === b.position[0] &&
-    a.position[1] === b.position[1] &&
-    a.rotationDirection === b.rotationDirection
-  );
+  return a.size === b.size && isSamePoint(a.position, b.position) && a.rotationDirection === b.rotationDirection;
 }
 
 export function moveCog(cogs: Cog[], cog: Cog, grid: Grid, move: Point): Cog {

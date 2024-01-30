@@ -14,11 +14,11 @@ function App() {
   const speed = 300;
 
   const grid: GridProps = {
-    viewBox: [0, 0, 100, 100],
+    viewBox: [0, 0, 300, 300],
     gap: 10,
   };
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, gameStatus, links, nextCog, reset, brokenLinks } =
+  const { cogs, tick, moveLeft, moveRight, moveBottom, gameStatus, links, nextCog, reset, brokenLinks, score } =
     useGameState(grid);
 
   useKeyboardControl({
@@ -47,6 +47,8 @@ function App() {
           <For each={brokenLinks()}>{([from, to]) => <CogsLink from={from} to={to} error />}</For>
         </SVG>
         <div class="w-48 flex flex-col gap-2 p-2">
+          <p class="text-xl">Score:</p>
+          <p class="text-xl text-right">{score()}</p>
           <p class="text-xl">Next:</p>
           <Show when={nextCog()}>
             {(cog) => (

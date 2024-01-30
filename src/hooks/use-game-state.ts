@@ -2,7 +2,7 @@ import { createEffect, createSignal, on } from "solid-js";
 import type { Cog, Grid, Line, Point } from "../model";
 import { GameStatus, RotationDirection } from "../model";
 import { getNeighborsCogs, getOppositeRotation, isColliding, isSameCog, moveCog } from "../utils/cog.utils";
-import { getCompleteLines } from "../utils/game.utils";
+import { getCompleteLines, removeLine } from "../utils/game.utils";
 
 function getRandomDirection(): RotationDirection {
   const rand = Math.random();
@@ -15,10 +15,15 @@ function getRandomDirection(): RotationDirection {
   }
 }
 
+function getRandomSize(gap: number): number {
+  return gap;
+  return Math.random() > 0.7 ? gap * 2 : gap;
+}
+
 export function useGameState(grid: Grid, tickMove = 10) {
   const buildDefaultCog = (): Cog => ({
     position: [grid.viewBox[2] / 2, 0],
-    size: grid.gap,
+    size: getRandomSize(grid.gap),
     rotationDirection: getRandomDirection(),
   });
 
@@ -28,6 +33,7 @@ export function useGameState(grid: Grid, tickMove = 10) {
   const [cogs, setCogs] = createSignal<Cog[]>([]);
   const [links, setLinks] = createSignal<Line[]>([]);
   const [brokenLinks, setBrokenLinks] = createSignal<Line[]>([]);
+  const [score, setScore] = createSignal(0);
 
   function tick() {
     if (gameStatus() === GameStatus.Loose) return false;
@@ -81,8 +87,23 @@ export function useGameState(grid: Grid, tickMove = 10) {
         for (const link of current) checkLink(link);
 
         const completeLines = getCompleteLines(current, grid);
-        console.log(completeLines);
-        // TODO
+
+        const result = completeLines.reduce<{ links: Line[]; cogs: Cog[]; removeCount: number }>(
+          (acc, v) => {
+            const res = removeLine(acc.cogs, v, grid.gap);
+
+            return { ...res, removeCount: acc.removeCount + res.removeCount };
+          },
+          {
+            links: current,
+            cogs: cogs(),
+            removeCount: 0,
+          }
+        );
+
+        setCogs(result.cogs);
+        setLinks(result.links);
+        setScore(score() + result.removeCount);
       }
     )
   );
@@ -119,20 +140,10 @@ export function useGameState(grid: Grid, tickMove = 10) {
     }
   }
 
-  function moveLeft() {
+  function moveActive(direction: -1 | 1) {
     const cog = activeCog();
     if (!cog) return;
-    setActiveCog(moveCog(cogs(), cog, grid, [-grid.gap * 2, 0]));
-  }
-
-  function moveRight() {
-    const cog = activeCog();
-    if (!cog) return;
-    setActiveCog(moveCog(cogs(), cog, grid, [grid.gap * 2, 0]));
-  }
-
-  function moveBottom() {
-    tick();
+    setActiveCog(moveCog(cogs(), cog, grid, [grid.gap * 2 * direction, 0]));
   }
 
   function reset() {
@@ -142,6 +153,7 @@ export function useGameState(grid: Grid, tickMove = 10) {
     setLinks([]);
     setBrokenLinks([]);
     setGameStatus(GameStatus.InProgress);
+    setScore(0);
   }
 
   return {
@@ -149,9 +161,10 @@ export function useGameState(grid: Grid, tickMove = 10) {
     tick,
     links,
     gameStatus,
-    moveLeft,
-    moveRight,
-    moveBottom,
+    score,
+    moveLeft: () => moveActive(-1),
+    moveRight: () => moveActive(1),
+    moveBottom: tick,
     nextCog,
     brokenLinks,
     reset,
