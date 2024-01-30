@@ -11,6 +11,11 @@ export function getNeighborsCogs(cog: Cog, others: Cog[]) {
   return others.filter((o) => neighborsPoints.some((p) => isSamePoint(p, o.position)));
 }
 
+export function getNeighborsCogsBottom(cog: Cog, others: Cog[]) {
+  const point = movePoint(cog.position, [0, 1]);
+  return others.find((o) => isSamePoint(point, o.position));
+}
+
 export function computeRotationDirection(dir: RotationDirection, ...dirs: RotationDirection[]): RotationDirection {
   for (const d of dirs) dir = d * -1;
   return dir;

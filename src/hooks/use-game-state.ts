@@ -1,8 +1,10 @@
 import { createEffect, createSignal, on } from "solid-js";
-import type { Cog, Grid, Line, Point } from "../model";
+import type { Cog, CogGroup, Grid, Line, Point } from "../model";
 import { GameStatus, RotationDirection } from "../model";
-import { getNeighborsCogs, getOppositeRotation, isColliding, isSameCog, moveCog } from "../utils/cog.utils";
+import { buildCogGroup, getLinksFromGroup, moveCogGroup } from "../utils/cog-group.utils";
+import { getNeighborsCogs, getNeighborsCogsBottom, getOppositeRotation, isSameCog } from "../utils/cog.utils";
 import { getCompleteLines, removeLine } from "../utils/game.utils";
+import { useLines } from "./use-lines";
 
 function getRandomDirection(): RotationDirection {
   const rand = Math.random();
@@ -21,9 +23,11 @@ export function useGameState(grid: Grid) {
     rotationDirection: getRandomDirection(),
   });
 
+  const buildDefaultCogGroup = () => buildCogGroup(buildDefaultCog());
+
   const [gameStatus, setGameStatus] = createSignal(GameStatus.InProgress);
-  const [activeCog, setActiveCog] = createSignal<Cog | undefined>(buildDefaultCog());
-  const [nextCog, setNextCog] = createSignal(buildDefaultCog());
+  const [activeCogGroup, setActiveCogGroup] = createSignal<CogGroup | undefined>(buildDefaultCogGroup());
+  const [nextCogGroup, setNextCogGroup] = createSignal(buildDefaultCogGroup());
   const [cogs, setCogs] = createSignal<Cog[]>([]);
   const [links, setLinks] = createSignal<Line[]>([]);
   const [brokenLinks, setBrokenLinks] = createSignal<Line[]>([]);
@@ -32,15 +36,29 @@ export function useGameState(grid: Grid) {
   function tick() {
     if (gameStatus() === GameStatus.Loose) return false;
 
-    const cog = activeCog();
-    if (!cog) return;
+    const cogGroup = activeCogGroup();
+    if (!cogGroup) return;
 
-    const newCog = moveCog(cogs(), cog, grid.size, [0, 1]);
+    const newCogGroup = moveCogGroup(cogs(), cogGroup, [0, 1], grid.size);
 
-    // cog succeed to move, OK
-    const ok = isSameCog(newCog, cog) ? addStaticCog(newCog) : setActiveCog(newCog);
+    const { lines: newLinks, addLine } = useLines();
 
-    if (!ok) return false;
+    for (const cog of newCogGroup) {
+      const nBottom = getNeighborsCogsBottom(cog, cogs());
+      if (!nBottom && newLinks.length === 0) continue;
+      const neighbors = getNeighborsCogs(cog, cogs());
+      for (const neighbor of neighbors) addLine([neighbor.position, cog.position]);
+    }
+
+    const touchSomething = newLinks.length !== 0;
+    const touchBottom = newCogGroup.some((c) => c.position[1] === grid.size[1] - 1);
+
+    if (!touchSomething && !touchBottom) return setActiveCogGroup(newCogGroup);
+
+    setCogs([...cogs(), ...newCogGroup]);
+    setLinks([...links(), ...newLinks, ...getLinksFromGroup(newCogGroup)]);
+    setActiveCogGroup(nextCogGroup());
+    setNextCogGroup(buildDefaultCogGroup());
   }
 
   function getCogOnPoint([x, y]: Point): Cog | undefined {
@@ -111,39 +129,19 @@ export function useGameState(grid: Grid) {
     )
   );
 
-  function addStaticCog(cog: Cog) {
-    const colliding = getNeighborsCogs(cog, cogs());
-    if (!colliding.length) {
-      setCogs([...cogs(), cog]);
-      setActiveCog(nextCog());
-      setNextCog(buildDefaultCog());
-      return true;
-    }
-
-    setCogs([...cogs(), cog]);
-    setLinks([...links(), ...colliding.map((c) => [c.position, cog.position] as Line)]);
-
-    if (!isColliding(nextCog(), cogs())) {
-      setActiveCog(nextCog());
-      setNextCog(buildDefaultCog());
-      return true;
-    } else {
-      setGameStatus(GameStatus.Loose);
-      setActiveCog(undefined);
-      return false;
-    }
-  }
-
   function moveActive(direction: -1 | 1) {
-    const cog = activeCog();
+    const cog = activeCogGroup();
     if (!cog) return;
-    setActiveCog(moveCog(cogs(), cog, grid.size, [1 * direction, 0]));
+
+    const newCogGroup = moveCogGroup(cogs(), cog, [1 * direction, 0], grid.size);
+
+    if (newCogGroup !== cog) setActiveCogGroup(newCogGroup);
   }
 
   function reset() {
     setCogs([]);
-    setActiveCog(buildDefaultCog());
-    setNextCog(buildDefaultCog());
+    setActiveCogGroup(buildDefaultCogGroup());
+    setNextCogGroup(buildDefaultCogGroup());
     setLinks([]);
     setBrokenLinks([]);
     setGameStatus(GameStatus.InProgress);
@@ -151,7 +149,7 @@ export function useGameState(grid: Grid) {
   }
 
   return {
-    cogs: () => [...cogs(), activeCog()].filter(Boolean) as Cog[],
+    cogs: () => [...cogs(), ...(activeCogGroup() ?? [])] as Cog[],
     tick,
     links,
     gameStatus,
@@ -159,7 +157,7 @@ export function useGameState(grid: Grid) {
     moveLeft: () => moveActive(-1),
     moveRight: () => moveActive(1),
     moveBottom: tick,
-    nextCog,
+    nextCogGroup,
     brokenLinks,
     reset,
   };

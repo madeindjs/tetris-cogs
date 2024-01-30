@@ -26,7 +26,7 @@ export default function Grid({ gridSize: [width, height] }: Props) {
   }
 
   return (
-    <g>
+    <g aria-label="Grid">
       <For each={Array.from(getLinesPoints())}>
         {([x1, y1, x2, y2]) => (
           <line

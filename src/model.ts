@@ -18,7 +18,61 @@ export type Cog = {
   rotationDirection: RotationDirection;
 };
 
+export type CogGroup = Cog[];
+
 export enum GameStatus {
   InProgress = "in-progress",
   Loose = "loose",
+}
+
+export enum CogGroupShape {
+  /**
+   * ~~~
+   * xxxx
+   * ~~~
+   */
+  I = "I",
+  /**
+   * ~~~
+   *  xx
+   * xx
+   * ~~~
+   */
+  S = "S",
+  /**
+   * ~~~
+   * x
+   * xxx
+   * ~~~
+   */
+  J = "J",
+  /**
+   * ~~~
+   *  x
+   * xxx
+   * ~~~
+   */
+  T = "T",
+  /**
+   * ~~~
+   * x
+   * x
+   * XX
+   * ~~~
+   */
+  L = "L",
+  /**
+   * ~~~
+   * xx
+   * xx
+   * ~~~
+   */
+  O = "O",
+  /**
+   * ~~~
+   * xx
+   *  xx
+   * ~~~
+   */
+  Z = "Z",
 }

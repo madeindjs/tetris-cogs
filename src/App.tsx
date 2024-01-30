@@ -1,5 +1,6 @@
 import { For, Show } from "solid-js";
 import Cog from "./components/cog";
+import CogGroupNextPreview from "./components/cog-group-next-preview";
 import CogsLink from "./components/cogs-link";
 import Grid from "./components/grid";
 import SVG from "./components/svg";
@@ -19,7 +20,7 @@ function App() {
 
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, gameStatus, links, nextCog, reset, brokenLinks, score } =
+  const { cogs, tick, moveLeft, moveRight, moveBottom, gameStatus, links, nextCogGroup, reset, brokenLinks, score } =
     useGameState(grid);
 
   useKeyboardControl({
@@ -47,16 +48,8 @@ function App() {
           <p class="text-xl">Score:</p>
           <p class="text-xl text-right">{score()}</p>
           <p class="text-xl">Next:</p>
-          <Show when={nextCog()}>
-            {(cog) => (
-              <SVG width={100} height={100} viewBox={[0, 0, 1, 1].join(" ")}>
-                <Cog
-                  position={() => [0.5, 0.5]}
-                  size={() => cogSize}
-                  rotationDirection={() => cog().rotationDirection}
-                />
-              </SVG>
-            )}
+          <Show when={nextCogGroup()}>
+            <CogGroupNextPreview cogGroup={nextCogGroup} />
           </Show>
           <Show when={gameStatus() === GameStatus.Loose}>
             <button onClick={reset} class="btn btn-primary">

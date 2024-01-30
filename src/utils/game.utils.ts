@@ -1,6 +1,7 @@
+import { useLines } from "../hooks/use-lines";
 import type { Cog, Grid, Line } from "../model";
 import { getNeighborsCogs, isSameCog } from "./cog.utils";
-import { isSamePoint, movePoint } from "./geometry.utils";
+import { movePoint } from "./geometry.utils";
 
 export function getCompleteLines(links: Line[], grid: Grid): number[] {
   const points = links
@@ -17,12 +18,7 @@ export function getCompleteLines(links: Line[], grid: Grid): number[] {
 }
 
 export function buildLinks(cogs: Cog[]): Line[] {
-  const links: Line[] = [];
-
-  function addLine(line: Line) {
-    const exists = links.some(([from, to]) => line.every((p) => isSamePoint(p, from) || isSamePoint(p, to)));
-    if (!exists) links.push(line);
-  }
+  const { lines, addLine } = useLines();
 
   for (const cog of cogs) {
     const others = cogs.filter((c) => !isSameCog(c, cog));
@@ -30,7 +26,7 @@ export function buildLinks(cogs: Cog[]): Line[] {
     for (const neighbor of neighbors) addLine([cog.position, neighbor.position]);
   }
 
-  return links;
+  return lines;
 }
 
 export function removeLine(cogs: Cog[], y: number): { cogs: Cog[]; links: Line[]; removeCount: number } {
