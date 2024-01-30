@@ -1,9 +1,9 @@
 import { createEffect, createSignal, on } from "solid-js";
-import type { Cog, CogGroup, Grid, Line, Point } from "../model";
+import type { Cog, CogGroup, Grid, Line } from "../model";
 import { GameStatus, RotationDirection } from "../model";
 import { buildCogGroup, getLinksFromGroup, moveCogGroup } from "../utils/cog-group.utils";
-import { getNeighborsCogs, getNeighborsCogsBottom, getOppositeRotation, isSameCog } from "../utils/cog.utils";
-import { getCompleteLines, removeLine } from "../utils/game.utils";
+import { getNeighborsCogs, getNeighborsCogsBottom } from "../utils/cog.utils";
+import { checkAndRemoveCompleteLines, computeCogsRotation } from "../utils/game.utils";
 import { useLines } from "./use-lines";
 
 function getRandomDirection(): RotationDirection {
@@ -61,61 +61,22 @@ export function useGameState(grid: Grid) {
     setNextCogGroup(buildDefaultCogGroup());
   }
 
-  function getCogOnPoint([x, y]: Point): Cog | undefined {
-    return cogs().find((c) => c.position[0] === x && c.position[1] === y);
-  }
-
-  function updateCog(old: Cog, current: Cog) {
-    const index = cogs().findIndex((c) => isSameCog(c, old));
-    if (index === -1) throw Error("cannot find cog");
-    const copy = [...cogs()];
-    copy[index] = current;
-    setCogs(copy);
-  }
-
-  /**
-   * Check that every lines are coherents
-   */
-  function checkLink([from, to]: Line) {
-    const cogA = getCogOnPoint(from);
-    const cogB = getCogOnPoint(to);
-    if (!cogA || !cogB) throw Error();
-
-    if (cogA.rotationDirection === RotationDirection.None && cogB.rotationDirection === RotationDirection.None) {
-      return;
-    } else if (cogA.rotationDirection === RotationDirection.None) {
-      updateCog(cogA, { ...cogA, rotationDirection: getOppositeRotation(cogB.rotationDirection) });
-    } else if (cogB.rotationDirection === RotationDirection.None) {
-      updateCog(cogB, { ...cogB, rotationDirection: getOppositeRotation(cogA.rotationDirection) });
-    } else if (cogA.rotationDirection === cogB.rotationDirection) {
-      setBrokenLinks([...brokenLinks(), [cogA.position, cogB.position]]);
-    }
-  }
-
   createEffect(
     on(
       () => links(),
       (current) => {
-        for (const link of current) checkLink(link);
+        const {
+          cogs: cogsAfterRemove,
+          links: linksAfterRemove,
+          removeCount,
+        } = checkAndRemoveCompleteLines(cogs(), current, grid);
 
-        const completeLines = getCompleteLines(current, grid);
+        setScore(score() + removeCount);
 
-        const result = completeLines.reduce<{ links: Line[]; cogs: Cog[]; removeCount: number }>(
-          (acc, v) => {
-            const res = removeLine(acc.cogs, v);
-
-            return { ...res, removeCount: acc.removeCount + res.removeCount };
-          },
-          {
-            links: current,
-            cogs: cogs(),
-            removeCount: 0,
-          }
-        );
+        const result = computeCogsRotation(cogsAfterRemove, linksAfterRemove);
 
         setCogs(result.cogs);
-        setLinks(result.links);
-        setScore(score() + result.removeCount);
+        if (result.brokenLinks) setBrokenLinks([...brokenLinks(), ...result.brokenLinks]);
       }
     )
   );
