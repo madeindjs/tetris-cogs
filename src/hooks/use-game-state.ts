@@ -2,9 +2,8 @@ import { createSignal } from "solid-js";
 import type { Cog, CogGroup, Grid } from "../model";
 import { Rotation } from "../model";
 import { buildCogGroup, moveCogGroup } from "../utils/cog-group.utils";
-import { getNeighborsCogs, getNeighborsCogsBottom } from "../utils/cog.utils";
+import { getNeighborsCogsBottom } from "../utils/cog.utils";
 import { computeCogsRotation } from "../utils/game.utils";
-import { useLines } from "./use-lines";
 
 function getRandomDirection(): Rotation {
   const rand = Math.random();
@@ -36,19 +35,13 @@ export function useGameState(grid: Grid) {
 
     const newCogGroup = moveCogGroup(cogs(), cogGroup, [0, 1], grid.size);
 
-    const { lines: newLinks, addLine } = useLines();
+    function isTouchingSomething() {
+      if (newCogGroup.some((c) => c.position[1] === grid.size[1] - 1)) return true;
 
-    for (const cog of newCogGroup) {
-      const nBottom = getNeighborsCogsBottom(cog, cogs());
-      if (!nBottom && newLinks.length === 0) continue;
-      const neighbors = getNeighborsCogs(cog, cogs());
-      for (const neighbor of neighbors) addLine([neighbor.position, cog.position]);
+      return newCogGroup.some((cog) => getNeighborsCogsBottom(cog, cogs()) !== undefined);
     }
 
-    const touchSomething = newLinks.length !== 0;
-    const touchBottom = newCogGroup.some((c) => c.position[1] === grid.size[1] - 1);
-
-    if (!touchSomething && !touchBottom) return setActiveCogGroup(newCogGroup);
+    if (!isTouchingSomething()) return setActiveCogGroup(newCogGroup);
 
     setCogs(computeCogsRotation([...cogs(), ...newCogGroup]));
     setActiveCogGroup(nextCogGroup());
@@ -67,11 +60,11 @@ export function useGameState(grid: Grid) {
     setCogs([]);
     setActiveCogGroup(buildDefaultCogGroup());
     setNextCogGroup(buildDefaultCogGroup());
-
     setScore(0);
   }
 
   return {
+    // TODO: separate this to improve memo
     cogs: () => [...cogs(), ...(activeCogGroup() ?? [])] as Cog[],
     tick,
     score,

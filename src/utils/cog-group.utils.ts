@@ -1,6 +1,5 @@
-import { useLines } from "../hooks/use-lines";
 import { Cog, CogGroup, CogGroupShape, GridSize, Point } from "../model";
-import { getNeighborsCogs, getOppositeRotation, isSameCog } from "./cog.utils";
+import { getOppositeRotation } from "./cog.utils";
 import { isPointInsideArea, isSamePoint, movePoint } from "./geometry.utils";
 
 export function getRandomCogGroupShape(): CogGroupShape {
@@ -65,11 +64,6 @@ export function buildCogGroup(origin: Cog, shape: CogGroupShape = getRandomCogGr
   }
 }
 
-export function isSameCogGroup(a: CogGroup, b: CogGroup) {
-  if (a.length !== b.length) return false;
-  return a.every((ca) => b.some((cb) => isSameCog(ca, cb)));
-}
-
 export function moveCogGroup(existing: Cog[], group: CogGroup, offset: Point, gridSize: GridSize): CogGroup {
   const newGroup: CogGroup = group.map((c) => ({ ...c, position: movePoint(c.position, offset) }));
 
@@ -78,15 +72,4 @@ export function moveCogGroup(existing: Cog[], group: CogGroup, offset: Point, gr
   });
 
   return canMove ? newGroup : group;
-}
-
-export function getLinksFromGroup(group: CogGroup) {
-  const { lines, addLine } = useLines();
-
-  for (const cog of group) {
-    const others = group.filter((c) => !isSameCog(c, cog));
-    for (const n of getNeighborsCogs(cog, others)) addLine([n.position, cog.position]);
-  }
-
-  return lines;
 }

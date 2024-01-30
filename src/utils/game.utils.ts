@@ -43,7 +43,7 @@ export function removeLine(cogs: Cog[], y: number): { cogs: Cog[]; links: Line[]
     removeCount: cogs.length - newCogs.length,
   };
 }
-
+// TODO: fix this
 export function checkAndRemoveCompleteLines(cogs: Cog[], links: Line[], grid: Grid) {
   return getCompleteLines(links, grid).reduce<{ links: Line[]; cogs: Cog[]; removeCount: number }>(
     (acc, v) => {

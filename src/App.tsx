@@ -31,6 +31,7 @@ function App() {
     onLeft: moveLeft,
   });
 
+  // TODO: kill animation once game break
   useAnimationFrame(tick, speed);
 
   return (
