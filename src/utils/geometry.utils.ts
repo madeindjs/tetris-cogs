@@ -25,3 +25,15 @@ export function isPointInsideArea(point: Point, gridSize: GridSize) {
 
   return x >= 0 && y >= 0 && x < width && y < height;
 }
+
+export function getBoundingRect(
+  points: Point[],
+  radius: number = 0
+): [xMin: number, yMin: number, xMax: number, yMax: number] {
+  const xMin = Math.min(...points.map((c) => c[0]));
+  const xMax = Math.max(...points.map((c) => c[0]));
+  const yMin = Math.min(...points.map((c) => c[1]));
+  const yMax = Math.max(...points.map((c) => c[1]));
+
+  return [xMin - radius / 2, yMin - radius / 2, xMax - xMin + radius, yMax - yMin + radius];
+}

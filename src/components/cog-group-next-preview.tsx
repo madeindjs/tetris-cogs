@@ -1,15 +1,29 @@
-import { type Accessor } from "solid-js";
+import { For, type Accessor } from "solid-js";
 import type { CogGroup as CogGroupModel, ViewBox } from "../model";
+import { movePoint } from "../utils/geometry.utils";
 import CogGroup from "./cog-group";
 import SVG from "./svg";
 
 type Props = {
-  cogGroup: Accessor<CogGroupModel>;
+  cogGroups: Accessor<CogGroupModel[]>;
 };
 
-export default function CogGroupNextPreview({ cogGroup }: Props) {
+/**
+ * Display the next 3 cogs groups.
+ */
+export default function CogGroupNextPreview({ cogGroups }: Props) {
+  const cogGroupsPositionned = (): CogGroupModel[] => {
+    return cogGroups().map<CogGroupModel>((cogGroup, i) => {
+      if (i === 0) return cogGroup;
+
+      return cogGroup.map((cog) => ({ ...cog, position: movePoint(cog.position, [0, i * 4 + i]) }));
+    });
+  };
+
   const viewBox = (): ViewBox => {
-    const points = cogGroup().map((c) => c.position);
+    const points = cogGroupsPositionned()
+      .flatMap((g) => g)
+      .map((c) => c.position);
 
     const xMin = Math.min(...points.map((c) => c[0]));
     const xMax = Math.max(...points.map((c) => c[0]));
@@ -20,8 +34,8 @@ export default function CogGroupNextPreview({ cogGroup }: Props) {
   };
 
   return (
-    <SVG width={100} height={100} viewBox={viewBox().join(" ")}>
-      <CogGroup cogGroup={cogGroup} />
+    <SVG width={100} height={300} viewBox={viewBox().join(" ")}>
+      <For each={cogGroupsPositionned()}>{(cogGroup) => <CogGroup cogGroup={() => cogGroup} />}</For>
     </SVG>
   );
 }

@@ -1,31 +1,14 @@
 import { createSignal } from "solid-js";
 import type { Cog, CogGroup, Grid, Point } from "../model";
-import { Rotation } from "../model";
-import { buildCogGroup, moveCogGroup, rotateGroup } from "../utils/cog-group.utils";
+import { moveCogGroup, rotateGroup } from "../utils/cog-group.utils";
 import { getNeighborsCogsBottom } from "../utils/cog.utils";
 import { checkAndRemoveCompleteLines, computeCogsRotation } from "../utils/game.utils";
-
-function getRandomDirection(): Rotation {
-  const rand = Math.random();
-  if (rand < 1 / 3) {
-    return Rotation.Anti;
-  } else if (rand > 2 / 3) {
-    return Rotation.Clockwise;
-  } else {
-    return Rotation.None;
-  }
-}
+import { useCogGroupQueue } from "./use-cog-group-queue";
 
 export function useGameState(grid: Grid) {
-  const buildDefaultCog = (): Cog => ({
-    position: [grid.size[0] / 2, 0],
-    rotation: getRandomDirection(),
-  });
+  const { queue: nextCogGroups, take: getNextCogGroup } = useCogGroupQueue(grid);
 
-  const buildDefaultCogGroup = () => buildCogGroup(buildDefaultCog());
-
-  const [activeCogGroup, setActiveCogGroup] = createSignal<CogGroup | undefined>(buildDefaultCogGroup());
-  const [nextCogGroup, setNextCogGroup] = createSignal(buildDefaultCogGroup());
+  const [activeCogGroup, setActiveCogGroup] = createSignal<CogGroup | undefined>(getNextCogGroup());
   const [cogs, setCogs] = createSignal<Cog[]>([]);
   const [score, setScore] = createSignal(0);
 
@@ -57,8 +40,7 @@ export function useGameState(grid: Grid) {
     if (deletedCogs) setScore(score() + deletedCogs * 10);
 
     setCogs(computeCogsRotation(newCogsAfterDelete));
-    setActiveCogGroup(nextCogGroup());
-    setNextCogGroup(buildDefaultCogGroup());
+    setActiveCogGroup(getNextCogGroup());
 
     return true;
   }
@@ -87,8 +69,7 @@ export function useGameState(grid: Grid) {
 
   function reset() {
     setCogs([]);
-    setActiveCogGroup(buildDefaultCogGroup());
-    setNextCogGroup(buildDefaultCogGroup());
+    setActiveCogGroup(getNextCogGroup());
     setScore(0);
   }
 
@@ -105,7 +86,7 @@ export function useGameState(grid: Grid) {
       setScore(score() + 1);
     },
     confirm,
-    nextCogGroup,
+    nextCogGroups,
     reset,
   };
 }

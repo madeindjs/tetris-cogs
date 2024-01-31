@@ -22,7 +22,7 @@ export default function Game({ height, speedMs, width }: Props) {
   const cogSize = 1;
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score, activeCogGroup, rotate, confirm } =
+  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroups, reset, score, activeCogGroup, rotate, confirm } =
     useGameState(grid);
 
   const links = useLinks(cogs);
@@ -63,9 +63,7 @@ export default function Game({ height, speedMs, width }: Props) {
         <p class="text-xl">Score:</p>
         <p class="text-xl text-right">{score()}</p>
         <p class="text-xl">Next:</p>
-        <Show when={nextCogGroup()}>
-          <CogGroupNextPreview cogGroup={nextCogGroup} />
-        </Show>
+        <CogGroupNextPreview cogGroups={nextCogGroups} />
         <Show when={hasErrors()}>
           <button onClick={retry} class="btn btn-primary">
             Retry
