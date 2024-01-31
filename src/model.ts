@@ -1,16 +1,14 @@
 export type Point = [x: number, y: number];
+
 export type Line = [from: Point, to: Point];
 
-export type GridSize = [xCount: number, yCount: number];
+export type GridSize = [width: number, height: number];
 
-export type Grid = { size: Point };
+export type Grid = { size: GridSize };
 
 export type ViewBox = [x: number, y: number, width: number, height: number];
 
-export type Link = {
-  points: Line;
-  broken?: boolean;
-};
+export type Link = { points: Line; broken?: boolean };
 
 export enum Rotation {
   Clockwise = 1,
@@ -18,13 +16,16 @@ export enum Rotation {
   None = 0,
 }
 
-export type Cog = {
-  position: Point;
-  rotation: Rotation;
-};
+export type Cog = { position: Point; rotation: Rotation };
 
+/**
+ * Aggregate of cogs which represent a {@link CogGroupShape}
+ */
 export type CogGroup = Cog[];
 
+/**
+ * Represent all Tetris shapes
+ */
 export enum CogGroupShape {
   /**
    * ~~~

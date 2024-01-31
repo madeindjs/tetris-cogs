@@ -7,6 +7,9 @@ type Props = {
   rotation: Accessor<Rotation>;
 };
 
+/**
+ * Represent a simple cog as SVG.
+ */
 export default function Cog({ size, position, rotation }: Props) {
   const color = () => getCogColor(rotation());
   const radius = () => size() / 2;

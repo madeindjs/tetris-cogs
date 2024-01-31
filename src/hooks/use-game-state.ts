@@ -29,10 +29,12 @@ export function useGameState(grid: Grid) {
   const [cogs, setCogs] = createSignal<Cog[]>([]);
   const [score, setScore] = createSignal(0);
 
+  /**
+   * @returns `true` if cog groups chnaged, `false` otherwhise
+   */
   function tick() {
-    console.log("tick");
     const cogGroup = activeCogGroup();
-    if (!cogGroup) return;
+    if (!cogGroup) return true;
 
     const newCogGroup = moveCogGroup(cogs(), cogGroup, [0, 1], grid.size);
 
@@ -43,17 +45,22 @@ export function useGameState(grid: Grid) {
       return newCogGroup.some((cog) => getNeighborsCogsBottom(cog, cogs()) !== undefined);
     }
 
-    if (!isTouchingSomething()) return setActiveCogGroup(newCogGroup);
+    if (!isTouchingSomething()) {
+      setActiveCogGroup(newCogGroup);
+      return false;
+    }
 
     const newCogs = [...cogs(), ...newCogGroup];
     const newCogsAfterDelete = checkAndRemoveCompleteLines([...cogs(), ...newCogGroup], grid);
 
     const deletedCogs = newCogs.length - newCogsAfterDelete.length;
-    if (deletedCogs) setScore(score() + deletedCogs);
+    if (deletedCogs) setScore(score() + deletedCogs * 10);
 
     setCogs(computeCogsRotation(newCogsAfterDelete));
     setActiveCogGroup(nextCogGroup());
     setNextCogGroup(buildDefaultCogGroup());
+
+    return true;
   }
 
   function moveActive(move: Point) {
@@ -67,6 +74,15 @@ export function useGameState(grid: Grid) {
   function rotateActivateGroup() {
     const cog = activeCogGroup();
     if (cog) setActiveCogGroup(rotateGroup(cog));
+  }
+
+  function confirm() {
+    let ok = false;
+
+    do {
+      ok = tick();
+    } while (!ok);
+    // TODO: implement
   }
 
   function reset() {
@@ -84,7 +100,11 @@ export function useGameState(grid: Grid) {
     rotate: rotateActivateGroup,
     moveLeft: () => moveActive([-1, 0]),
     moveRight: () => moveActive([1, 0]),
-    moveBottom: () => moveActive([0, 1]),
+    moveBottom: () => {
+      moveActive([0, 1]);
+      setScore(score() + 1);
+    },
+    confirm,
     nextCogGroup,
     reset,
   };

@@ -14,15 +14,12 @@ import { ViewBox, type Grid as GridProps } from "./model";
 export default function App() {
   const width = 400;
   const height = 800;
-  const speed = 300;
-
+  const speedMs = 300;
   const grid: GridProps = { size: [10, 20] };
-
   const cogSize = 1;
-
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score, activeCogGroup, rotate } =
+  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score, activeCogGroup, rotate, confirm } =
     useGameState(grid);
 
   const links = useLinks(cogs);
@@ -33,11 +30,12 @@ export default function App() {
     onRight: moveRight,
     onBottom: moveBottom,
     onLeft: moveLeft,
-    onEnter: rotate,
-    onSpace: rotate,
+    onEnter: confirm,
+    onSpace: confirm,
+    onUp: rotate,
   });
 
-  const { start, stop } = useAnimationFrame(tick, speed);
+  const { start, stop } = useAnimationFrame(tick, speedMs);
 
   onMount(start);
 
