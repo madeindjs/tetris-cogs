@@ -34,7 +34,7 @@ export default function CogGroupNextPreview({ cogGroups }: Props) {
   };
 
   return (
-    <SVG width={100} height={300} viewBox={viewBox().join(" ")}>
+    <SVG width={100} height={300} viewBox={viewBox().join(" ")} class="w-full">
       <For each={cogGroupsPositionned()}>{(cogGroup) => <CogGroup cogGroup={() => cogGroup} />}</For>
     </SVG>
   );

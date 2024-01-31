@@ -50,8 +50,8 @@ export default function Game({ height, speedMs, width }: Props) {
   }
 
   return (
-    <div class="flex gap-2">
-      <SVG width={width} height={height} viewBox={viewBox.join(" ")} class="bg-base-300">
+    <div class="flex flex-col-reverse gap-2 h-full w-full sm:flex-row">
+      <SVG viewBox={viewBox.join(" ")} class=" flex-grow">
         <Grid gridSize={grid.size} />
         <For each={cogs()}>
           {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
@@ -59,16 +59,20 @@ export default function Game({ height, speedMs, width }: Props) {
         <Show when={activeCogGroup()}>{(group) => <CogGroup cogGroup={group} />}</Show>
         <For each={links()}>{({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}</For>
       </SVG>
-      <div class="w-48 flex flex-col gap-2 p-2">
-        <p class="text-xl">Score:</p>
-        <p class="text-xl text-right">{score()}</p>
-        <p class="text-xl">Next:</p>
-        <CogGroupNextPreview cogGroups={nextCogGroups} />
-        <Show when={hasErrors()}>
-          <button onClick={retry} class="btn btn-primary">
-            Retry
-          </button>
-        </Show>
+      <div class="w-48 flex flex-col gap-2 ">
+        <div class="border rounded p-2 bg-base-100">
+          <p class="text-xl font-bold mb-2">Score:</p>
+          <p class="text-xl text-right">{score()}</p>
+        </div>
+        <div class="border rounded p-2 bg-base-100">
+          <p class="text-xl font-bold mb-2">Next:</p>
+          <CogGroupNextPreview cogGroups={nextCogGroups} />
+          <Show when={hasErrors()}>
+            <button onClick={retry} class="btn btn-primary">
+              Retry
+            </button>
+          </Show>
+        </div>
       </div>
     </div>
   );

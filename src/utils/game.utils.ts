@@ -35,7 +35,7 @@ export function computeCogsRotation(currentCogs: Cog[]) {
 
   function updateCog(old: Cog, current: Cog) {
     const index = cogs.findIndex((c) => isSameCog(c, old));
-    if (index === -1) return console.error("cannot find cog");
+    if (index === -1) return; //console.error("cannot find cog");
     cogs[index] = current;
     changed = true;
   }
