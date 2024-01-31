@@ -2,7 +2,7 @@ import { Cog, CogGroup, CogGroupShape, GridSize, Point } from "../model";
 import { getOppositeRotation } from "./cog.utils";
 import { isPointInsideArea, isSamePoint, movePoint } from "./geometry.utils";
 
-export function getRandomCogGroupShape(): CogGroupShape {
+function getRandomCogGroupShape(): CogGroupShape {
   const enumValues = Object.values(CogGroupShape);
   const index = Math.floor(Math.random() * enumValues.length);
   return enumValues[index] as CogGroupShape;
@@ -72,4 +72,33 @@ export function moveCogGroup(existing: Cog[], group: CogGroup, offset: Point, gr
   });
 
   return canMove ? newGroup : group;
+}
+
+function average(numbers: number[]): number {
+  let sum = 0;
+  for (let i = 0; i < numbers.length; i++) {
+    sum += numbers[i];
+  }
+  return sum / numbers.length;
+}
+
+function getCogGroupCenterPoint(group: CogGroup): Point {
+  const points = group.map((g) => g.position);
+  return [Math.round(average(points.map((p) => p[0]))), Math.round(average(points.map((p) => p[1])))];
+}
+
+export function rotateGroup(group: CogGroup) {
+  const [cx, cy] = getCogGroupCenterPoint(group);
+
+  let rotatedShape: CogGroup = [];
+
+  for (const cog of group) {
+    const x = cog.position[0] - cx;
+    const y = cog.position[1] - cy;
+    const xNew = cx + y;
+    const yNew = cy - x;
+    rotatedShape.push({ ...cog, position: [xNew, yNew] });
+  }
+
+  return rotatedShape;
 }

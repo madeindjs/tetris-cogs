@@ -17,6 +17,7 @@ export function getNeighborsCogsBottom(cog: Cog, others: Cog[]) {
 }
 
 export function computeRotationDirection(dir: Rotation, ...dirs: Rotation[]): Rotation {
+  return dirs.reduce((_, d) => d * -1, dir);
   for (const d of dirs) dir = d * -1;
   return dir;
 }

@@ -1,4 +1,4 @@
-import { For, Show } from "solid-js";
+import { For, Show, createEffect, on, onMount } from "solid-js";
 import Cog from "./components/cog";
 import CogGroup from "./components/cog-group";
 import CogGroupNextPreview from "./components/cog-group-next-preview";
@@ -11,7 +11,7 @@ import { useKeyboardControl } from "./hooks/use-keyboard-controls";
 import { useLinks } from "./hooks/use-links";
 import { ViewBox, type Grid as GridProps } from "./model";
 
-function App() {
+export default function App() {
   const width = 400;
   const height = 800;
   const speed = 300;
@@ -22,19 +22,31 @@ function App() {
 
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score, activeCogGroup } =
+  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroup, reset, score, activeCogGroup, rotate } =
     useGameState(grid);
 
   const links = useLinks(cogs);
+
+  const hasErrors = () => links().some((l) => l.broken);
 
   useKeyboardControl({
     onRight: moveRight,
     onBottom: moveBottom,
     onLeft: moveLeft,
+    onEnter: rotate,
+    onSpace: rotate,
   });
 
-  // TODO: kill animation once game break
-  useAnimationFrame(tick, speed);
+  const { start, stop } = useAnimationFrame(tick, speed);
+
+  onMount(start);
+
+  createEffect(on(hasErrors, (value) => value && stop()));
+
+  function retry() {
+    reset();
+    start();
+  }
 
   return (
     <div class="h-screen w-screen flex items-center justify-center">
@@ -56,8 +68,8 @@ function App() {
           <Show when={nextCogGroup()}>
             <CogGroupNextPreview cogGroup={nextCogGroup} />
           </Show>
-          <Show when={links().filter((b) => b.broken).length > 0}>
-            <button onClick={reset} class="btn btn-primary">
+          <Show when={hasErrors()}>
+            <button onClick={retry} class="btn btn-primary">
               Retry
             </button>
           </Show>
@@ -66,5 +78,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

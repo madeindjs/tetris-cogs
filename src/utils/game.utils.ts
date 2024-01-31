@@ -12,7 +12,7 @@ export function getCompleteLines(cogs: Cog[], grid: Grid): number[] {
     }, {});
 
   return Object.entries(points)
-    .filter(([_, ys]) => ys.size === grid.size[1])
+    .filter(([_, ys]) => ys.size === grid.size[0])
     .map(([x]) => Number(x));
 }
 
@@ -25,7 +25,6 @@ export function removeLine(cogs: Cog[], y: number) {
     });
 }
 
-// TODO: doesn't work
 export function checkAndRemoveCompleteLines(cogs: Cog[], grid: Grid) {
   return getCompleteLines(cogs, grid).reduce<Cog[]>((acc, v) => removeLine(acc, v), cogs);
 }

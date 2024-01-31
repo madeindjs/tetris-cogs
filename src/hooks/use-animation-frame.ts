@@ -1,25 +1,33 @@
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { onCleanup } from "solid-js";
 
 export function useAnimationFrame(callback: () => void, ms = 200) {
-  const [running, setRunning] = createSignal(false);
+  let running = false;
+  let animationFrameId: number | undefined;
 
   function tick() {
-    if (!running()) return;
-
-    requestAnimationFrame(() => {
+    animationFrameId = requestAnimationFrame(() => {
+      if (!running) return;
       callback();
       setTimeout(tick, ms);
     });
   }
 
-  onMount(() => {
-    setRunning(true);
-    tick();
-  });
-
   onCleanup(() => {
-    setRunning(false);
+    stop();
   });
 
-  return () => setRunning(false);
+  function start() {
+    stop();
+    running = true;
+    tick();
+  }
+
+  function stop() {
+    running = false;
+    if (animationFrameId === undefined) return;
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = undefined;
+  }
+
+  return { start, stop };
 }

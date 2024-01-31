@@ -1,0 +1,232 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildCogGroup > Should compute shape I 1`] = `
+[
+  {
+    "position": [
+      0,
+      0,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      0,
+      1,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      0,
+      2,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      0,
+      3,
+    ],
+    "rotation": -1,
+  },
+]
+`;
+
+exports[`buildCogGroup > Should compute shape J 1`] = `
+[
+  {
+    "position": [
+      0,
+      0,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      0,
+      1,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      1,
+      1,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      2,
+      1,
+    ],
+    "rotation": -1,
+  },
+]
+`;
+
+exports[`buildCogGroup > Should compute shape L 1`] = `
+[
+  {
+    "position": [
+      0,
+      0,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      0,
+      1,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      0,
+      2,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      1,
+      2,
+    ],
+    "rotation": -1,
+  },
+]
+`;
+
+exports[`buildCogGroup > Should compute shape O 1`] = `
+[
+  {
+    "position": [
+      0,
+      0,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      0,
+      1,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      1,
+      0,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      1,
+      1,
+    ],
+    "rotation": 1,
+  },
+]
+`;
+
+exports[`buildCogGroup > Should compute shape S 1`] = `
+[
+  {
+    "position": [
+      0,
+      0,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      1,
+      0,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      0,
+      1,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      -1,
+      1,
+    ],
+    "rotation": 1,
+  },
+]
+`;
+
+exports[`buildCogGroup > Should compute shape T 1`] = `
+[
+  {
+    "position": [
+      0,
+      0,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      -1,
+      0,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      1,
+      0,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      0,
+      1,
+    ],
+    "rotation": -1,
+  },
+]
+`;
+
+exports[`buildCogGroup > Should compute shape Z 1`] = `
+[
+  {
+    "position": [
+      0,
+      0,
+    ],
+    "rotation": 1,
+  },
+  {
+    "position": [
+      -1,
+      0,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      0,
+      1,
+    ],
+    "rotation": -1,
+  },
+  {
+    "position": [
+      1,
+      1,
+    ],
+    "rotation": 1,
+  },
+]
+`;

@@ -16,6 +16,8 @@ export default function Cog({ size, position, rotation }: Props) {
   const x = () => position()[0];
   const y = () => position()[1];
 
+  console.log("Cog renreder");
+
   function Tooth(props: { rotation: number }) {
     const transform = `rotate(${props.rotation} ${x()} ${y()})`;
     return (

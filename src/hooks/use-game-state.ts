@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
-import type { Cog, CogGroup, Grid } from "../model";
+import type { Cog, CogGroup, Grid, Point } from "../model";
 import { Rotation } from "../model";
-import { buildCogGroup, moveCogGroup } from "../utils/cog-group.utils";
+import { buildCogGroup, moveCogGroup, rotateGroup } from "../utils/cog-group.utils";
 import { getNeighborsCogsBottom } from "../utils/cog.utils";
 import { checkAndRemoveCompleteLines, computeCogsRotation } from "../utils/game.utils";
 
@@ -30,6 +30,7 @@ export function useGameState(grid: Grid) {
   const [score, setScore] = createSignal(0);
 
   function tick() {
+    console.log("tick");
     const cogGroup = activeCogGroup();
     if (!cogGroup) return;
 
@@ -44,17 +45,28 @@ export function useGameState(grid: Grid) {
 
     if (!isTouchingSomething()) return setActiveCogGroup(newCogGroup);
 
-    setCogs(computeCogsRotation(checkAndRemoveCompleteLines([...cogs(), ...newCogGroup], grid)));
+    const newCogs = [...cogs(), ...newCogGroup];
+    const newCogsAfterDelete = checkAndRemoveCompleteLines([...cogs(), ...newCogGroup], grid);
+
+    const deletedCogs = newCogs.length - newCogsAfterDelete.length;
+    if (deletedCogs) setScore(score() + deletedCogs);
+
+    setCogs(computeCogsRotation(newCogsAfterDelete));
     setActiveCogGroup(nextCogGroup());
     setNextCogGroup(buildDefaultCogGroup());
   }
 
-  function moveActive(direction: -1 | 1) {
-    const cog = activeCogGroup();
-    if (!cog) return;
+  function moveActive(move: Point) {
+    const group = activeCogGroup();
+    if (!group) return;
 
-    const newCogGroup = moveCogGroup(cogs(), cog, [1 * direction, 0], grid.size);
-    if (newCogGroup !== cog) setActiveCogGroup(newCogGroup);
+    const newCogGroup = moveCogGroup(cogs(), group, move, grid.size);
+    if (newCogGroup !== group) setActiveCogGroup(newCogGroup);
+  }
+
+  function rotateActivateGroup() {
+    const cog = activeCogGroup();
+    if (cog) setActiveCogGroup(rotateGroup(cog));
   }
 
   function reset() {
@@ -69,10 +81,10 @@ export function useGameState(grid: Grid) {
     activeCogGroup,
     tick,
     score,
-    // TODO: add possibility to rotate active
-    moveLeft: () => moveActive(-1),
-    moveRight: () => moveActive(1),
-    moveBottom: tick,
+    rotate: rotateActivateGroup,
+    moveLeft: () => moveActive([-1, 0]),
+    moveRight: () => moveActive([1, 0]),
+    moveBottom: () => moveActive([0, 1]),
     nextCogGroup,
     reset,
   };

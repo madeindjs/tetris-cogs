@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Cog, Rotation } from "../model";
-import { checkAndRemoveCompleteLines, removeLine } from "./game.utils";
+import { Cog, Grid, Rotation } from "../model";
+import { checkAndRemoveCompleteLines, getCompleteLines, removeLine } from "./game.utils";
 
 describe(removeLine.name, () => {
   it("should remove a simple line", () => {
@@ -58,40 +58,30 @@ describe(checkAndRemoveCompleteLines.name, () => {
   });
 });
 
-// describe(getCompleteLines.name, () => {
-//   const grid: Grid = {
-//     size: [2, 2],
-//   };
+describe(getCompleteLines.name, () => {
+  const grid: Grid = {
+    size: [2, 2],
+  };
 
-//   it("should detect 1 lines", () => {
-//     const links: Line[] = [
-//       [
-//         [0, 0],
-//         [1, 0],
-//       ],
-//     ];
+  it("should detect 1 lines", () => {
+    const cogA: Cog = { position: [0, 0], rotation: Rotation.Clockwise };
+    const cogB: Cog = { position: [0, 1], rotation: Rotation.Anti };
+    const cogC: Cog = { position: [1, 0], rotation: Rotation.Anti };
+    const cogD: Cog = { position: [2, 2], rotation: Rotation.Anti };
 
-//     const res = getCompleteLines(links, grid);
+    const res = getCompleteLines([cogA, cogB, cogC, cogD], grid);
 
-//     expect(res).toStrictEqual([0]);
-//   });
+    expect(res).toStrictEqual([0]);
+  });
 
-//   it("should detect 2 lines", () => {
-//     const links: Line[] = [
-//       [
-//         [0, 0],
-//         [1, 0],
-//       ],
-//       [
-//         [0, 1],
-//         [1, 1],
-//       ],
-//     ];
+  it("should detect 2 lines", () => {
+    const cogA: Cog = { position: [0, 0], rotation: Rotation.Clockwise };
+    const cogB: Cog = { position: [0, 1], rotation: Rotation.Anti };
+    const cogC: Cog = { position: [1, 0], rotation: Rotation.Anti };
+    const cogD: Cog = { position: [1, 1], rotation: Rotation.Clockwise };
 
-//     const res = getCompleteLines(links, grid);
+    const res = getCompleteLines([cogA, cogB, cogC, cogD], grid);
 
-//     expect(res).toStrictEqual([0, 1]);
-//   });
-// });
-
-// describe(computeCogsRotation.name, () => {});
+    expect(res).toStrictEqual([0, 1]);
+  });
+});
