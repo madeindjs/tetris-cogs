@@ -5,21 +5,20 @@ type Props = {
   size: Accessor<number>;
   position: Accessor<Point>;
   rotation: Accessor<Rotation>;
+  shadow?: boolean;
 };
 
 /**
  * Represent a simple cog as SVG.
  */
-export default function Cog({ size, position, rotation }: Props) {
-  const color = () => getCogColor(rotation());
+export default function Cog({ size, position, rotation, shadow }: Props) {
+  const color = () => (shadow ? "fill-base-100" : getCogColor(rotation()));
   const radius = () => size() / 2;
   const toothOfsset = () => radius() * 0.15;
   const baseCircleRadius = () => radius() - toothOfsset();
   const innerCircleRadius = () => baseCircleRadius() / 2;
   const x = () => position()[0];
   const y = () => position()[1];
-
-  console.log("Cog renreder");
 
   function Tooth(props: { rotation: number }) {
     const transform = `rotate(${props.rotation} ${x()} ${y()})`;

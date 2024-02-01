@@ -1,5 +1,6 @@
 import { For, Show, createEffect, on, onMount } from "solid-js";
 import { useAnimationFrame } from "../hooks/use-animation-frame";
+import { useCogFuturePosition } from "../hooks/use-cog-future-position";
 import { useGameState } from "../hooks/use-game-state";
 import { useKeyboardControl } from "../hooks/use-keyboard-controls";
 import { useLinks } from "../hooks/use-links";
@@ -8,18 +9,17 @@ import { Grid as GridProps, ViewBox } from "../model";
 import Cog from "./cog";
 import CogGroup from "./cog-group";
 import CogGroupNextPreview from "./cog-group-next-preview";
+import CogGroupShadow from "./cog-group-shadow";
 import CogsLink from "./cogs-link";
 import { GameLayout } from "./game-layout";
 import Grid from "./grid";
 import SVG from "./svg";
 
 type Props = {
-  width: number;
-  height: number;
   speedMs: number;
 };
 
-export default function Game({ height, speedMs, width }: Props) {
+export default function Game({ speedMs }: Props) {
   const grid: GridProps = { size: [10, 20] };
   const cogSize = 1;
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
@@ -49,6 +49,8 @@ export default function Game({ height, speedMs, width }: Props) {
 
   const { start, stop } = useAnimationFrame(tick, speedMs);
 
+  const futurePosition = useCogFuturePosition(cogs, activeCogGroup, grid);
+
   onMount(start);
 
   createEffect(on(hasErrors, (value) => value && stop()));
@@ -67,6 +69,7 @@ export default function Game({ height, speedMs, width }: Props) {
             {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
           </For>
           <Show when={activeCogGroup()}>{(group) => <CogGroup cogGroup={group} />}</Show>
+          <Show when={futurePosition()}>{(group) => <CogGroupShadow cogGroup={group} />}</Show>
           <For each={links()}>
             {({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}
           </For>

@@ -1,14 +1,13 @@
 import { createSignal } from "solid-js";
 import type { Cog, CogGroup, Grid, Point } from "../model";
-import { moveCogGroup, rotateGroup } from "../utils/cog-group.utils";
-import { getNeighborsCogsBottom } from "../utils/cog.utils";
+import { isCogGroupTouchingSomething, moveCogGroup, rotateGroup } from "../utils/cog-group.utils";
 import { checkAndRemoveCompleteLines, computeCogsRotation } from "../utils/game.utils";
 import { useCogGroupQueue } from "./use-cog-group-queue";
 
 export function useGameState(grid: Grid) {
   const { queue: nextCogGroups, take: getNextCogGroup } = useCogGroupQueue(grid);
 
-  const [activeCogGroup, setActiveCogGroup] = createSignal<CogGroup | undefined>(getNextCogGroup());
+  const [activeCogGroup, setActiveCogGroup] = createSignal<CogGroup>(getNextCogGroup());
   const [cogs, setCogs] = createSignal<Cog[]>([]);
   const [score, setScore] = createSignal(0);
 
@@ -22,13 +21,7 @@ export function useGameState(grid: Grid) {
     const newCogGroup = moveCogGroup(cogs(), cogGroup, [0, 1], grid.size);
 
     // TODO: let extra move once touch something
-    function isTouchingSomething() {
-      if (newCogGroup.some((c) => c.position[1] === grid.size[1] - 1)) return true;
-
-      return newCogGroup.some((cog) => getNeighborsCogsBottom(cog, cogs()) !== undefined);
-    }
-
-    if (!isTouchingSomething()) {
+    if (!isCogGroupTouchingSomething(cogs(), newCogGroup, grid)) {
       setActiveCogGroup(newCogGroup);
       return false;
     }

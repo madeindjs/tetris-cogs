@@ -1,5 +1,5 @@
-import { Cog, CogGroup, CogGroupShape, GridSize, Point } from "../model";
-import { getOppositeRotation } from "./cog.utils";
+import { Cog, CogGroup, CogGroupShape, Grid, GridSize, Point } from "../model";
+import { getNeighborsCogsBottom, getOppositeRotation } from "./cog.utils";
 import { isPointInsideArea, isSamePoint, movePoint } from "./geometry.utils";
 
 function getRandomCogGroupShape(): CogGroupShape {
@@ -101,4 +101,9 @@ export function rotateGroup(group: CogGroup) {
   }
 
   return rotatedShape;
+}
+
+export function isCogGroupTouchingSomething(cogs: Cog[], group: CogGroup, grid: Grid) {
+  if (group.some((c) => c.position[1] === grid.size[1] - 1)) return true;
+  return group.some((cog) => getNeighborsCogsBottom(cog, cogs) !== undefined);
 }
