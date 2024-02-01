@@ -1,4 +1,4 @@
-import { For, Show, createEffect, on, onMount } from "solid-js";
+import { For, Show, createEffect, createSignal, on } from "solid-js";
 import { useAnimationFrame } from "../hooks/use-animation-frame";
 import { useCogFuturePosition } from "../hooks/use-cog-future-position";
 import { useGameState } from "../hooks/use-game-state";
@@ -6,6 +6,7 @@ import { useKeyboardControl } from "../hooks/use-keyboard-controls";
 import { useLinks } from "../hooks/use-links";
 import { useSwipeGesture } from "../hooks/use-swipe-gesture";
 import { Grid as GridProps, ViewBox } from "../model";
+import Hero from "./Hero";
 import Cog from "./cog";
 import CogGroup from "./cog-group";
 import CogGroupNextPreview from "./cog-group-next-preview";
@@ -24,8 +25,22 @@ export default function Game({ speedMs }: Props) {
   const cogSize = 1;
   const viewBox: ViewBox = [-0.5, -0.5, grid.size[0], grid.size[1]];
 
-  const { cogs, tick, moveLeft, moveRight, moveBottom, nextCogGroups, reset, score, activeCogGroup, rotate, confirm } =
-    useGameState(grid);
+  const [started, setStarted] = createSignal(false);
+
+  const {
+    cogs,
+    tick,
+    moveLeft,
+    moveRight,
+    moveBottom,
+    nextCogGroups,
+    reset,
+    score,
+    activeCogGroup,
+    rotate,
+    confirm,
+    level,
+  } = useGameState(grid);
 
   const links = useLinks(cogs);
 
@@ -51,12 +66,15 @@ export default function Game({ speedMs }: Props) {
 
   const futurePosition = useCogFuturePosition(cogs, activeCogGroup, grid);
 
-  onMount(start);
-
   createEffect(on(hasErrors, (value) => value && stop()));
 
   function retry() {
     reset();
+    start();
+  }
+
+  function onStart() {
+    setStarted(true);
     start();
   }
 
@@ -82,16 +100,27 @@ export default function Game({ speedMs }: Props) {
       }
       childrenLevel={
         <p class="text-xl text-right">
-          <Countdown value={score} />
+          <Countdown value={level} />
         </p>
       }
       childrenNext={<CogGroupNextPreview cogGroups={nextCogGroups} class="-rotate-90 sm:rotate-0" />}
       childrenRetry={
-        <Show when={hasErrors()}>
-          <button onClick={retry} class="btn btn-primary btn-lg shadow-lg">
-            Retry
-          </button>
-        </Show>
+        <>
+          <Show when={hasErrors()}>
+            <button onClick={retry} class="btn btn-primary btn-lg shadow-lg">
+              Retry
+            </button>
+          </Show>
+          <Show when={!started()}>
+            <div class="flex flex-col gap-4">
+              <Hero />
+
+              <button onClick={onStart} class="btn btn-primary btn-lg shadow-lg">
+                Start
+              </button>
+            </div>
+          </Show>
+        </>
       }
     />
   );

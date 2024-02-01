@@ -11,6 +11,8 @@ export function useGameState(grid: Grid) {
   const [cogs, setCogs] = createSignal<Cog[]>([]);
   const [score, setScore] = createSignal(0);
 
+  const level = () => Math.round(score() / 300) + 1;
+
   /**
    * @returns `true` if cog groups chnaged, `false` otherwhise
    */
@@ -81,5 +83,6 @@ export function useGameState(grid: Grid) {
     confirm,
     nextCogGroups,
     reset,
+    level,
   };
 }
