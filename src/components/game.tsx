@@ -9,8 +9,8 @@ import { Grid as GridProps, ViewBox } from "../model";
 import Cog from "./cog";
 import CogGroup from "./cog-group";
 import CogGroupNextPreview from "./cog-group-next-preview";
-import CogGroupShadow from "./cog-group-shadow";
 import CogsLink from "./cogs-link";
+import Countdown from "./countdown";
 import { GameLayout } from "./game-layout";
 import Grid from "./grid";
 import SVG from "./svg";
@@ -69,18 +69,26 @@ export default function Game({ speedMs }: Props) {
             {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
           </For>
           <Show when={activeCogGroup()}>{(group) => <CogGroup cogGroup={group} />}</Show>
-          <Show when={futurePosition()}>{(group) => <CogGroupShadow cogGroup={group} />}</Show>
+          <Show when={futurePosition()}>{(group) => <CogGroup cogGroup={group} shadow />}</Show>
           <For each={links()}>
             {({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}
           </For>
         </SVG>
       }
-      childrenScore={<p class="text-xl text-right">{score()}</p>}
-      childrenLevel={<p class="text-xl text-right">{score()}</p>}
+      childrenScore={
+        <p class="text-xl text-right">
+          <Countdown value={score} />
+        </p>
+      }
+      childrenLevel={
+        <p class="text-xl text-right">
+          <Countdown value={score} />
+        </p>
+      }
       childrenNext={<CogGroupNextPreview cogGroups={nextCogGroups} class="-rotate-90 sm:rotate-0" />}
       childrenRetry={
         <Show when={hasErrors()}>
-          <button onClick={retry} class="btn btn-primary">
+          <button onClick={retry} class="btn btn-primary btn-lg shadow-lg">
             Retry
           </button>
         </Show>

@@ -11,8 +11,11 @@ type Props = {
 export function GameLayout(props: Props) {
   return (
     <div class="grid grid-cols-6 grid-rows-6 gap-2 h-full w-full">
-      <div class="col-start-1 col-span-6 row-span-4 row-start-2 sm:col-span-4 sm:row-span-6 flex justify-center">
+      <div class="col-start-1 col-span-6 row-span-4 row-start-2 sm:col-span-4 sm:row-span-6 flex justify-center relative">
         {props.childrenGame}
+        {Boolean(props.childrenRetry) && (
+          <div class="absolute left-0 top-0 flex w-full h-full justify-center items-center">{props.childrenRetry}</div>
+        )}
       </div>
 
       <div class="border rounded p-2 bg-base-100 row-start-1 sm:row-start-1 col-start-1 sm:col-start-5 col-span-3 sm:col-span-2">
@@ -28,8 +31,6 @@ export function GameLayout(props: Props) {
         {/* <div class="flex-grow flex">{props.childrenNext}</div> */}
         {props.childrenNext}
       </div>
-
-      {/* {props.childrenRetry} */}
     </div>
   );
 }

@@ -31,14 +31,25 @@ export default function Cog({ size, position, rotation, shadow }: Props) {
         class={color()}
         rx={toothOfsset()}
         transform={transform}
+        stroke-dasharray={shadow ? "0.1" : undefined}
+        stroke-width={shadow ? "0.1" : undefined}
+        stroke={shadow ? "fill-base-content" : undefined}
       />
     );
   }
 
   return (
-    <g aria-label="Cog">
-      <circle r={baseCircleRadius()} cx={x()} cy={y()} class={color()} />
-      <For each={[0, 20, 40, 60, 80, 100, 120, 140, 160]}>{(angle) => <Tooth rotation={angle} />}</For>
+    <g aria-label="Cog" class={"fill-base-300"}>
+      {!shadow && <For each={[0, 20, 40, 60, 80, 100, 120, 140, 160]}>{(angle) => <Tooth rotation={angle} />}</For>}
+      <circle
+        r={baseCircleRadius()}
+        cx={x()}
+        cy={y()}
+        class={color() + (shadow ? " stroke-current" : "")}
+        stroke-dasharray={shadow ? "0.1" : undefined}
+        stroke-width={shadow ? "0.05" : undefined}
+        stroke={shadow ? "fill-base-content" : undefined}
+      />
       <circle r={innerCircleRadius()} cx={x()} cy={y()} fill="white" class="fill-base-300" />
       <animateTransform
         attributeName="transform"

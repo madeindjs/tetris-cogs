@@ -4,9 +4,10 @@ type Props = {
   from: Point;
   to: Point;
   error?: boolean;
+  shadow?: boolean;
 };
 
-export default function CogsLink({ from, to, error }: Props) {
+export default function CogsLink({ from, to, error, shadow }: Props) {
   return (
     <g aria-label="Link">
       <line
@@ -15,6 +16,7 @@ export default function CogsLink({ from, to, error }: Props) {
         x2={to[0]}
         y2={to[1]}
         stroke-width={0.05}
+        stroke-dasharray={shadow ? "0.1" : undefined}
         class={error ? "stroke-error" : "stroke-base-content"}
       />
       <Handle point={from} error={error} />
