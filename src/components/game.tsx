@@ -3,6 +3,7 @@ import { useAnimationFrame } from "../hooks/use-animation-frame";
 import { useGameState } from "../hooks/use-game-state";
 import { useKeyboardControl } from "../hooks/use-keyboard-controls";
 import { useLinks } from "../hooks/use-links";
+import { useSwipeGesture } from "../hooks/use-swipe-gesture";
 import { Grid as GridProps, ViewBox } from "../model";
 import Cog from "./cog";
 import CogGroup from "./cog-group";
@@ -38,6 +39,13 @@ export default function Game({ height, speedMs, width }: Props) {
     onUp: rotate,
   });
 
+  useSwipeGesture({
+    onSwipeLeft: moveLeft,
+    onSwipeBottom: moveBottom,
+    onSwipeRight: moveRight,
+    onSwipeUp: rotate,
+  });
+
   const { start, stop } = useAnimationFrame(tick, speedMs);
 
   onMount(start);
@@ -51,7 +59,7 @@ export default function Game({ height, speedMs, width }: Props) {
 
   return (
     <div class="flex flex-col-reverse gap-2 h-full w-full sm:flex-row">
-      <SVG viewBox={viewBox.join(" ")} class=" flex-grow">
+      <SVG viewBox={viewBox.join(" ")} class="flex-grow">
         <Grid gridSize={grid.size} />
         <For each={cogs()}>
           {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
@@ -59,20 +67,24 @@ export default function Game({ height, speedMs, width }: Props) {
         <Show when={activeCogGroup()}>{(group) => <CogGroup cogGroup={group} />}</Show>
         <For each={links()}>{({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}</For>
       </SVG>
-      <div class="w-48 flex flex-col gap-2 ">
+      <div class="flex w-full h-48 flex-row gap-2 sm:flex-col sm:flex-grow-0 sm:w-48 max-h-">
         <div class="border rounded p-2 bg-base-100">
           <p class="text-xl font-bold mb-2">Score:</p>
           <p class="text-xl text-right">{score()}</p>
         </div>
         <div class="border rounded p-2 bg-base-100">
-          <p class="text-xl font-bold mb-2">Next:</p>
-          <CogGroupNextPreview cogGroups={nextCogGroups} />
-          <Show when={hasErrors()}>
-            <button onClick={retry} class="btn btn-primary">
-              Retry
-            </button>
-          </Show>
+          <p class="text-xl font-bold mb-2">Level:</p>
+          <p class="text-xl text-right">{score()}</p>
         </div>
+        <div class="border rounded p-2 bg-base-100 flex-grow sm:flex-grow-0 flex sm:block">
+          <p class="text-xl font-bold mb-2">Next:</p>
+          <CogGroupNextPreview cogGroups={nextCogGroups} class="sm:w-full h-fit" />
+        </div>
+        <Show when={hasErrors()}>
+          <button onClick={retry} class="btn btn-primary">
+            Retry
+          </button>
+        </Show>
       </div>
     </div>
   );

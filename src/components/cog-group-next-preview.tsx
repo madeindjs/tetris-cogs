@@ -1,4 +1,5 @@
 import { For, type Accessor } from "solid-js";
+import type { JSX } from "solid-js/jsx-runtime";
 import type { CogGroup as CogGroupModel, ViewBox } from "../model";
 import { movePoint } from "../utils/geometry.utils";
 import CogGroup from "./cog-group";
@@ -6,14 +7,14 @@ import SVG from "./svg";
 
 type Props = {
   cogGroups: Accessor<CogGroupModel[]>;
-};
+} & Omit<JSX.SvgSVGAttributes<SVGSVGElement>, "xmlns">;
 
 /**
  * Display the next 3 cogs groups.
  */
-export default function CogGroupNextPreview({ cogGroups }: Props) {
+export default function CogGroupNextPreview(props: Props) {
   const cogGroupsPositionned = (): CogGroupModel[] => {
-    return cogGroups().map<CogGroupModel>((cogGroup, i) => {
+    return props.cogGroups().map<CogGroupModel>((cogGroup, i) => {
       if (i === 0) return cogGroup;
 
       return cogGroup.map((cog) => ({ ...cog, position: movePoint(cog.position, [0, i * 4 + i]) }));
@@ -34,7 +35,7 @@ export default function CogGroupNextPreview({ cogGroups }: Props) {
   };
 
   return (
-    <SVG width={100} height={300} viewBox={viewBox().join(" ")} class="w-full">
+    <SVG viewBox={viewBox().join(" ")} class={props["class"]}>
       <For each={cogGroupsPositionned()}>{(cogGroup) => <CogGroup cogGroup={() => cogGroup} />}</For>
     </SVG>
   );

@@ -37,3 +37,23 @@ export function getBoundingRect(
 
   return [xMin - radius / 2, yMin - radius / 2, xMax - xMin + radius, yMax - yMin + radius];
 }
+
+export function getDistance(a: Point, b: Point) {
+  const x = a[0] - b[0];
+  const y = a[1] - b[1];
+
+  return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+}
+
+export function getCardinalDirection(a: Point, b: Point): "up" | "bottom" | "left" | "right" {
+  const x = a[0] - b[0];
+  const y = a[1] - b[1];
+
+  const isVertical = Math.abs(y) > Math.abs(x);
+
+  if (isVertical) {
+    return y > 0 ? "up" : "bottom";
+  } else {
+    return x > 0 ? "left" : "right";
+  }
+}
