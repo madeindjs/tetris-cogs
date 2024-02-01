@@ -9,6 +9,7 @@ import Cog from "./cog";
 import CogGroup from "./cog-group";
 import CogGroupNextPreview from "./cog-group-next-preview";
 import CogsLink from "./cogs-link";
+import { GameLayout } from "./game-layout";
 import Grid from "./grid";
 import SVG from "./svg";
 
@@ -58,34 +59,29 @@ export default function Game({ height, speedMs, width }: Props) {
   }
 
   return (
-    <div class="flex flex-col-reverse gap-2 h-full w-full sm:flex-row">
-      <SVG viewBox={viewBox.join(" ")} class="flex-grow">
-        <Grid gridSize={grid.size} />
-        <For each={cogs()}>
-          {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
-        </For>
-        <Show when={activeCogGroup()}>{(group) => <CogGroup cogGroup={group} />}</Show>
-        <For each={links()}>{({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}</For>
-      </SVG>
-      <div class="flex w-full h-48 flex-row gap-2 sm:flex-col sm:flex-grow-0 sm:w-48 max-h-">
-        <div class="border rounded p-2 bg-base-100">
-          <p class="text-xl font-bold mb-2">Score:</p>
-          <p class="text-xl text-right">{score()}</p>
-        </div>
-        <div class="border rounded p-2 bg-base-100">
-          <p class="text-xl font-bold mb-2">Level:</p>
-          <p class="text-xl text-right">{score()}</p>
-        </div>
-        <div class="border rounded p-2 bg-base-100 flex-grow sm:flex-grow-0 flex sm:block">
-          <p class="text-xl font-bold mb-2">Next:</p>
-          <CogGroupNextPreview cogGroups={nextCogGroups} class="sm:w-full h-fit" />
-        </div>
+    <GameLayout
+      childrenGame={
+        <SVG viewBox={viewBox.join(" ")}>
+          <Grid gridSize={grid.size} />
+          <For each={cogs()}>
+            {(cog) => <Cog position={() => cog.position} size={() => cogSize} rotation={() => cog.rotation} />}
+          </For>
+          <Show when={activeCogGroup()}>{(group) => <CogGroup cogGroup={group} />}</Show>
+          <For each={links()}>
+            {({ points: [from, to], broken }) => <CogsLink from={from} to={to} error={broken} />}
+          </For>
+        </SVG>
+      }
+      childrenScore={<p class="text-xl text-right">{score()}</p>}
+      childrenLevel={<p class="text-xl text-right">{score()}</p>}
+      childrenNext={<CogGroupNextPreview cogGroups={nextCogGroups} class="-rotate-90 sm:rotate-0" />}
+      childrenRetry={
         <Show when={hasErrors()}>
           <button onClick={retry} class="btn btn-primary">
             Retry
           </button>
         </Show>
-      </div>
-    </div>
+      }
+    />
   );
 }

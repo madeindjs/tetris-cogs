@@ -1,5 +1,4 @@
-import { For, type Accessor } from "solid-js";
-import type { JSX } from "solid-js/jsx-runtime";
+import { For, type Accessor, type JSX } from "solid-js";
 import type { CogGroup as CogGroupModel, ViewBox } from "../model";
 import { movePoint } from "../utils/geometry.utils";
 import CogGroup from "./cog-group";

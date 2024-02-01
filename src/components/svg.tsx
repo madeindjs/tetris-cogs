@@ -1,4 +1,4 @@
-import type { JSX } from "solid-js/jsx-runtime";
+import type { JSX } from "solid-js";
 
 type Props = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, "xmlns">;
 
